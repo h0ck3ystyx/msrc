@@ -1,0 +1,113 @@
+dnl This is run through m4 before it is given to the target platform
+dnl be very careful of m4 keywords and such -- ksb
+dnl -DMKCMD="no" forces us not to use mkcmd on the remote machine
+`#
+# $Id: Make.host,v 4.13 2000/06/20 14:04:50 ksb Exp $
+#
+#  Makefile for distrib
+#
+#  Kevin Braunsdorf, FedEx UNIX Support
+#
+
+SHELL=/bin/sh
+ETC=${DESTDIR}'ifdef(`DSPD_SUPPORT',
+`/opt/fedex/support/bin',`/usr/local/etc')`
+LIB=${DESTDIR}'ifdef(`DSPD_SUPPORT',
+`/opt/fedex/support/lib/distrib',`/usr/local/lib/distrib')`
+
+L=/usr/local/include
+P=
+
+INCLUDE= -I$L
+DEBUG=	'ifelse(HOSTTYPE,`V386',`',`-O')`
+CDEFS=	-D'HOSTTYPE` -DALT_CONFIG_PATH=\"${LIB}\"
+CFLAGS= ${DEBUG} ${CDEFS} ${INCLUDE}
+
+HDR=	'ifelse(MKCMD,`no',`main.h ')`distrib.h envlist.h
+SRC=	'ifelse(MKCMD,`no',`main.c ')`distrib.c envlist.c
+GENc=	'ifelse(MKCMD,`no',`',`main.c')`
+GENh=	'ifelse(MKCMD,`no',`',`main.h')`
+GEN=	${GENc} ${GENh}
+DEP=	${SRC} ${GENc}
+OBJ=	main.o distrib.o envlist.o
+MAN=	distrib.man
+OTHER=	distrib.m
+SOURCE=	Makefile ${OTHER} ${HDR} ${SRC} ${MAN}
+
+'ifelse(HOSTTYPE,`NEXT2',`.SUFFIXES:
+.SUFFIXES: .c .h .o .s',`')`
+
+all: distrib.x
+
+distrib.x: ${OBJ}
+	${CC} -o $@ ${CFLAGS} ${OBJ}'ifelse(HOSTTYPE,`ETA10',` -lbsd',HOSTTYPE,`SUN5',` -lnsl')`'dnl
+ifelse(
+HOSTTYPE,`EPIX',` -lbsd',
+HOSTTYPE,`V386',` -L/usr/local/lib -lsocket -lbsd')`
+
+distrib.o:
+	${CC} ${CFLAGS} -DDEF_HOSTTYPE=\"'HOSTTYPE`\" -c distrib.c
+
+'ifelse(MKCMD,`no',`',`
+main.h: main.c
+
+main.c: distrib.m
+	mkcmd -G distrib.m'ifdef(`DSPD_SUPPORT',` support.m')`
+	-(cmp -s prog.c main.c || (mv prog.c main.c && echo main.c updated))
+	-(cmp -s prog.h main.h || (mv prog.h main.h && echo main.h updated))
+	rm -rf prog.[ch]
+')`
+boot: all ${ETC} ${LIB}
+	cp distrib.x ${ETC}/distrib
+	chmod 0755 ${ETC}/distrib
+	-[ -f ${LIB}/distrib.cf ] || touch ${LIB}/distrib.cf
+
+clean: FRC
+	rm -f Makefile.bak distrib.x ${GEN} *.o a.out core errs tags
+
+depend: ${GEN} ${SRC} ${HDR} FRC
+	maketd ${CDEFS} ${INCLUDE} ${DEP}
+
+distrib: FRC
+	distrib -c ${ETC}/distrib HOST
+
+install: all ${LIB} ${ETC} FRC
+	install -c -s distrib.x ${ETC}/distrib
+	-[ -f ${LIB}/distrib.cf ] || touch ${LIB}/distrib.cf
+
+lint: ${GEN} ${HDR} ${SRC} FRC
+	lint -h ${CDEFS} ${INCLUDE} ${DEP}
+
+print: source FRC
+	lpr -J"distrib source" ${SOURCE}
+
+mkcat:	${MAN} FRC
+	mkcat ${MAN}
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+tags: ${SRC} ${GEN} ${HDR}
+	ctags -t ${SRC} ${HDR} ${GEN}
+
+${SOURCE}:
+	co -q $@
+
+${ETC} ${LIB}:
+	mkdir -p $@
+
+FRC:
+
+
+# DO NOT DELETE THIS LINE - maketd DEPENDS ON IT
+
+distrib.o: distrib.c distrib.h envlist.h machine.h main.h
+
+envlist.o: envlist.c envlist.h
+
+main.o: distrib.h distrib.m envlist.h main.c
+
+# *** Do not add anything here - It will go away. ***
+'dnl

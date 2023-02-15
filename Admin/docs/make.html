@@ -1,0 +1,75 @@
+<HTML>
+<TITLE>Make's Standard Targets</TITLE>
+<BODY>
+<PRE>
+$Id: make.html,v 1.3 1997/07/15 00:07:44 ksb Exp $
+</PRE>
+
+<H1>The List</H1>
+<P>
+Uniformity in usage of a tool is called <EM>culture</EM>.
+The UNIX make(1) utility supports a wide range of features
+on the various *IX flavors -- some of which we may use
+others we avoid because they would bind us to an "advanced"
+version of make we would have to install and support on every
+target platform.
+<P>
+In the case of make(1) we also have some predefined recipes
+for constructing targets from prerequisite files.
+These have canonically named macros (e.g. ${CC} ${CFLAGS})
+which we must enhance to meet our goals.
+<P>
+Lastly the targets listed in each make(1) description should
+be common in spelling and usage:
+<UL>
+<LI>all
+Build the product, but do not install it.
+
+<LI> clean
+Remove all the temporary files used to build the product, but
+not the source.
+
+<LI> de-install
+Remove the installed product and documentation.
+
+<LI> depend
+Update the transitive dependencies in this Makefile, don't use -a
+
+<LI> dirs
+Build the destination directories for the product.
+
+<LI> distrib
+Assuming the product is installed, copy it to the machine's peers
+with distrib.
+
+<LI> install
+Install the product using install(1l).
+
+<LI> lint
+Reports any questionable C constructs.
+
+<LI> mkcat
+Use mkcat(8l) to install the documentation for the product.
+
+<LI> print
+Output the source code to the product to a printer.
+
+<LI> source
+Checkout all the source files needed to build the product.
+
+<LI> spotless
+Use rcsclean(1l) to remove un-modified products.
+
+<LI> tags
+Use ctags(1) to build a database of functions in the product.
+
+<LI> ${SOURCE}:
+Use to checkout source files on demand from RCS (or SCCS).
+
+</UL>
+<P>
+Note:  Some of these targets do not make sense for the nature of the
+product, i.e. it does not make sense to lint a shell script.
+
+</BODY>
+</HTML>

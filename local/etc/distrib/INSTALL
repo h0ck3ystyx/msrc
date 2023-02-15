@@ -1,0 +1,78 @@
+# $Id: INSTALL,v 4.4 1999/06/20 10:45:30 ksb Exp $
+#
+
+Prep.
+
+ Read distrib.man.
+
+ Make a list of the machines on your network, and which ones are (should be)
+ running the same software (binary files).  Choose a name for each group of
+ such hosts and pick one to be the one you build/compile on.  You now have
+ a list of <machine, group> and a note on some of them that they have source.
+
+ Don't worry too much if your list doesn't have *every* local UNIX host in
+ it, start small, you can add new machines later if you like.
+
+ Using the first component on the offcial host name as a short hostname,
+ turn the list into a table that looks like distrib.cf.
+
+ You might never use the 4th col, as far as I know no one does (anymore);
+ but the rule is to turn dots (points) in the official OS release into
+ zeros leaving 2 places for each factor.  So SunOS 4.1.4 becomes 40104
+ and KSBIX 2.30 becomes 230.]
+
+ # official		Short 	 CPU	OS		has
+ # Hostname		Hostname Type	revision	source
+ #
+ j.cc.purdue.edu	j	 VAX780	404		yes
+ l.cc.purdue.edu	l	 VAX780	404		.
+ svr5.dspd.fedex.com	srv5	 HPUX9	905		yes
+ ....
+
+ Now you have your own distrib.cf, the prototype is (mostly) saved in the
+ Examples directory so name yours distrib.cf.
+
+
+Compile:
+
+ Now days mkcmd fills in the full path to rdist and m4.  You'll have to
+ have mkcmd-7.21 or better installed.  I use mkcmd-8.13.
+
+ Try a make:
+	make
+
+ If that worked out try:
+	./distrib.x -C my-distrib.cf -V
+ you should see (s/_/$/, ignore HPUX9):
+	distrib.x: _Id: distrib.m,v 4.22 1999/06/20 10:38:58 ksb Dist _
+	distrib.x: using configuration from `my-distrib.cf'
+	distrib.x: default column headers: %HOST SHORTHOST HOSTTYPE HOSTOS HASSRC
+	distrib.x: compiled HOSTTYPE matches configured HPUX9
+	distrib.x: library path "/usr/local/lib/distrib"
+	distrib.x: rdist binary is "/usr/local/bin/rdist"
+	distrib.x: m4 binary is "/usr/bin/m4"
+
+ Now try
+	$ Scripts/minfo.sh `hostname`
+ you should get something like:
+	Machine:  svr6      (svr6)
+	Type:     HPUX9/905  (same)
+
+ Try the Examples.
+
+ You should use "make install" to instal the tool:
+	make install
+
+Docs:
+
+ If you have mkcat(1L) you know what to do.  Others can install the man
+ pages how ever local custom dictates.
+
+ The meta source documents (HTML style) are avaliable from me in another
+ source lump.  Read them before you go too much further.
+
+
+Problems:
+
+ If you have problems contact me at:
+	ksb@sa.fedex.com (Kevin S Braunsdorf)

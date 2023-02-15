@@ -1,0 +1,163 @@
+# $Id: dmz.cf,v 1.8 1999/02/05 19:23:50 ksb Exp $
+# Add a new host with the "HASSRC" set to "yes", run the
+# recover.sh script an change HASSRC to .
+# then checkin this file
+#RDIST_PATH="ifdef(`DMZ',`/usr/local/bin/sdist',`/usr/local/bin/rdist')"
+%HOST			SHORTHOST    HOSTTYPE HOSTOS HASSRC	DMZ
+CONSERVER="yes"
+trixie.sac.fedex.com	trixie		HPUX9	905	.	.
+zveegee.sac.fedex.com	zveegee		HPUX9	905	.	.
+groobee.sac.fedex.com	groobee		HPUX9	905	.	.
+tara.sac.fedex.com	tara		HPUX9	905	.	.
+minga.sac.fedex.com	minga		HPUX9	905	.	.
+#goo.sac.fedex.com	goo		HPUX9	905	.	.
+#gumby.sac.fedex.com	gumby		HPUX9	905	.	.
+nopey.sac.fedex.com	nopey		HPUX9	905	.	.
+puffball.sac.fedex.com	puffball	HPUX9	905	.	.
+CONSERVER=.
+RDIST_PATH="/usr/local/bin/sdist"
+# Harold's console server
+#w12.sac		w12		FREEBSD 20207	.	199.82.224.57
+#
+# SA+C
+PROJECT="sac"
+wadm1.zmd.fedex.com	wadm1		SUN5	20600	.	199.81.87.0
+wadm2.zmd.fedex.com	wadm2		SUN5	20600	.	199.81.87.0
+wadm3.zmd.fedex.com	wadm3		SUN5	20600	.	199.81.87.0
+wadm4.zmd.fedex.com	wadm4		SUN5	20600	.	199.81.87.0
+#wadm5.zmd.fedex.com	wadm5		SUN5	20600	.	199.81.87.0
+#wadm6.zmd.fedex.com	wadm6		SUN5	20600	.	199.81.87.0
+#wadm7.zmd.fedex.com	wadm7		SUN5	20600	.	199.81.87.0
+#wadm8.zmd.fedex.com	wadm8		SUN5	20600	.	199.81.87.0
+# FTP
+PROJECT="ftp"
+ftp1.dmz.fedex.com	ftp1		HPUX9	905	.	199.81.193.128
+ftp2.dmz.fedex.com	ftp2		HPUX9	905	.	199.81.193.128
+# LEC ec.fedex.net
+#ftp1.ec.fedex.net	ec1		SUN5	20501	.	199.81.193.192
+#ftp2.ec.fedex.net	ec2		SUN5	20501	.	199.81.193.192
+# VO
+PROJECT="vo"
+s1.blink.fedex.com	s1		SUN5	20501	.	199.81.193.32
+s2.blink.fedex.com	s2		SUN5	20501	.	199.81.193.32
+s3.blink.fedex.com	s3		SUN5	20501	.	199.81.193.32
+s4.blink.fedex.com	s4		SUN5	20501	.	199.81.193.32
+#
+# SHIP alpha test for FreeBSD hosts
+PROJECT="ship"
+ship20.dmz.fedex.com	ship20		FREEBSD	30000	.	199.81.195.0
+ship21.dmz.fedex.com	ship21		FREEBSD	30000	.	199.81.195.0
+ship22.dmz.fedex.com	ship22		FREEBSD	30000	.	199.81.195.0
+ship23.dmz.fedex.com	ship23		FREEBSD	30000	.	199.81.195.0
+ship24.dmz.fedex.com	ship24		FREEBSD	30000	.	199.81.195.0
+ship25.dmz.fedex.com	ship25		FREEBSD	30000	.	199.81.195.0
+# Web Servers
+PROJECT="www"
+www1.dmz.fedex.com	www1		SUN5	20600	.	199.81.193.32
+www2.dmz.fedex.com	www2		SUN5	20600	.	199.81.193.0
+www3.dmz.fedex.com	www3		SUN5	20600	.	199.81.193.32
+www4.dmz.fedex.com	www4		SUN5	20600	.	199.81.193.32
+www5.dmz.fedex.com	www5		SUN5	20600	.	199.81.193.32
+www6.dmz.fedex.com	www6		SUN5	20600	.	199.81.193.32
+www7.dmz.fedex.com	www7		SUN5	20600	.	199.81.193.0
+www8.dmz.fedex.com	www8		SUN5	20600	.	199.81.193.0
+www9.dmz.fedex.com	www9		SUN5	20600	.	199.81.193.0
+www10.dmz.fedex.com	www10		SUN5	20600	.	199.81.193.0
+www20.dmz.fedex.com	www20		SUN5	20600	.	199.81.195.0
+www21.dmz.fedex.com	www21		SUN5	20600	.	199.81.195.0
+www22.dmz.fedex.com	www22		SUN5	20600	.	199.81.195.0
+www23.dmz.fedex.com	www23		SUN5	20600	.	199.81.195.0
+www24.dmz.fedex.com	www24		SUN5	20600	.	199.81.195.0
+www25.dmz.fedex.com	www25		SUN5	20600	.	199.81.195.0
+www26.dmz.fedex.com	www26		SUN5	20600	.	199.81.195.0
+www27.dmz.fedex.com	www27		SUN5	20600	.	199.81.195.0
+www28.dmz.fedex.com	www28		SUN5	20600	.	199.81.195.0
+www29.dmz.fedex.com	www29		SUN5	20600	.	199.81.195.0
+www30.dmz.fedex.com	www30		SUN5	20600	.	199.81.195.0
+www31.dmz.fedex.com	www31		SUN5	20600	.	199.81.195.0
+www32.dmz.fedex.com	www32		SUN5	20600	.	199.81.195.0
+www33.dmz.fedex.com	www33		SUN5	20600	.	199.81.195.0
+www34.dmz.fedex.com	www34		SUN5	20600	.	199.81.195.0
+#www35.dmz.fedex.com	www35		SUN5	20600	.	199.81.195.0
+wwwtest1.dmz.fedex.com	wwwtest1	SUN5	20600	.	199.81.193.32
+wwwtest2.dmz.fedex.com	wwwtest2	SUN5	20600	.	199.81.193.32
+wwwbeta.dmz.fedex.com	wwwbeta		SUN5	20600	.	199.81.193.32
+wwwstage.dmz.fedex.com	wwwstage	SUN5	20600	.	199.81.195.0
+www101.dmz.fedex.com	www101		SUN5	20600	.	199.82.71.0
+www102.dmz.fedex.com	www102		SUN5	20600	.	199.82.71.0
+cps1.zmd.fedex.com	cps1		SUN5	20600	.	199.81.87.0
+cps2.zmd.fedex.com	cps2		SUN5	20600	.	199.81.87.0
+olrbtest1.zmd.fedex.com	olrbtest1	SUN5	20600	.	199.81.87.0
+cps4.zmd.fedex.com	cps4		SUN5	20600	.	199.81.87.0
+cpstest1.zmd.fedex.com	cpstest1	SUN5	20600	.	199.81.87.0
+cpstest2.zmd.fedex.com	cpstest2	SUN5	20600	.	199.81.87.0
+cpsstage.zmd.fedex.com	cpsstage	SUN5	20600	.	199.81.87.0
+app1.zmd.fedex.com	app1		SUN5	20600	.	199.81.87.0
+app2.zmd.fedex.com	app2		SUN5	20600	.	199.81.87.0
+app3.zmd.fedex.com	app3		SUN5	20600	.	199.81.87.0
+app4.zmd.fedex.com	app4		SUN5	20600	.	199.81.87.0
+app5.zmd.fedex.com	app5		SUN5	20600	.	199.81.87.0
+app6.zmd.fedex.com	app6		SUN5	20600	.	199.81.87.0
+apptest1.zmd.fedex.com	apptest1	SUN5	20600	.	199.81.87.0
+apptest2.zmd.fedex.com	apptest2	SUN5	20600	.	199.81.87.0
+appbeta1.zmd.fedex.com	appbeta1	SUN5	20600	.	199.81.87.0
+appstage.zmd.fedex.com	appstage	SUN5	20600	.	199.81.87.0
+log1.zmd.fedex.com	log1		SUN5	20600	.	199.81.87.0
+log2.zmd.fedex.com	log2		SUN5	20600	.	199.81.87.0
+dis.dmz.fedex.com	dis		SUN5	20501	.	199.81.193.32
+msrc1.dmz.fedex.com	msrc1		SUN5	20600	.	199.81.194.32
+cert1.zmd.fedex.com	cert1		SUN5	20600	.	199.81.87.0
+cert2.zmd.fedex.com	cert2		SUN5	20600	.	199.81.87.0
+olrb1.sac.fedex.com	olrb1		SUN5	20600	.	199.81.87.0
+olrb2.sac.fedex.com	olrb2		SUN5	20600	.	199.81.87.0
+comm5.sac.fedex.com	comm5		SUN5	20600	.	199.81.87.0
+comm7.sac.fedex.com	comm7		SUN5	20600	.	199.81.87.0
+y2k.sac.fedex.com	y2k		SUN5	20600	.	199.82.159.0
+# WebAPI (WAPI or WAI)
+PROJECT="wapi"
+wapi1.dmz.fedex.com	wapi1		SUN5	20600	.	199.81.193.0
+wapi2.dmz.fedex.com	wapi2		SUN5	20600	.	199.81.193.0
+wapi3.dmz.fedex.com	wapi3		SUN5	20600	.	199.81.193.0
+fxentrust1.zmd.fedex.com fxentrust1	SUN5	20600	.	199.81.87.0
+fxentrust2.zmd.fedex.com fxentrust2	SUN5	20600	.	199.81.87.0
+ldap1.zmd.fedex.com	ldap1		SUN5	20600	.	199.81.87.0
+ldap2.zmd.fedex.com	ldap2		SUN5	20600	.	199.81.87.0
+comm1.zmd.fedex.com	comm1		SUN5	20600	.	199.81.87.0
+comm2.zmd.fedex.com	comm2		SUN5	20600	.	199.81.87.0
+ver1.zmd.fedex.com	ver1		SUN5	20600	.	199.81.87.0
+ver2.zmd.fedex.com	ver2		SUN5	20600	.	199.81.87.0
+# mail relays
+PROJECT="smtp"
+mx1.dmz.fedex.com	mx1.dmz		FREEBSD	20206	.	199.81.194.32
+mx2.dmz.fedex.com	mx2		FREEBSD	20206	.	199.81.194.32
+mx1.zmd.fedex.com	mx3		FREEBSD	20206	.	.
+mx2.zmd.fedex.com	mx4		FREEBSD	20206	.	.
+goku.sac.fedex.com	goku		HPUX9	905	.	.
+gohan.sac.fedex.com	gohan		HPUX9	905	.	.
+# Oasis
+PROJECT="oasis"
+crc1.dmz.fedex.com	crc1		SUN5	20600	.	199.81.193.32
+crc2.dmz.fedex.com	crc2		SUN5	20600	.	199.81.193.0
+crctest1.dmz.fedex.com	crctest1	SUN5	20600	.	199.81.193.32
+frcdb1.zmd.fedex.com	frcdb1		SUN5	20600	.	199.81.87.0
+frcdb2.zmd.fedex.com	frcdb2		SUN5	20600	.	199.81.87.0
+smrc1.zmd.fedex.com	smrc1		SUN5	20600	.	199.81.87.0
+# Customs clearance (RMS/DTS)
+PROJECT="cc"
+cc1.dmz.fedex.com	cc1		SUN5	20600	.	199.81.193.0
+cc2.dmz.fedex.com	cc2		SUN5	20600	.	199.81.193.0
+cctest1.dmz.fedex.com	cctest1		SUN5	20600	.	199.81.193.0
+# Internet Name Service
+PROJECT="dns"
+# ZZZ grant's corp-net DMZ interface is unknown to me -- ksb
+#grant.dmz.fedex.com	grant		SUN5	20600	.	199.81.87.6
+grace.dmz.fedex.com	grace		SUN5	20600	.	199.81.193.96
+land.dmz.fedex.com	land		SUN5	20600	.	199.81.193.96
+# Bidpack Machines
+PROJECT="ebp"
+ebp1.dmz.fedex.com	ebp1		SUN5	20600	.	199.81.193.0
+ebp2.dmz.fedex.com	ebp2		SUN5	20600	.	199.81.193.32
+ebptest1.dmz.fedex.com	ebptest1	SUN5	20600	.	199.81.193.32
+# these two line must be the last lines in the file!
+PROJECT=.
+PATH_RDIST=.

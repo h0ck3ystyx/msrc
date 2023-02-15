@@ -1,0 +1,134 @@
+`# $Id: libc,v 2.2 1997/10/26 14:56:36 ksb Exp $
+#
+#	master Makefile for %% library name %%
+#
+# from above cd into this directory to make these in order:
+#	make all
+#	make install
+#	make clean
+#	make FPFLAGS=-fpa FPA=fpa fpa_install
+#	make FPA=fpa clean
+
+LIBBASE=	%% shortname for library %%
+INC=		${DESTDIR}/%% include directory %%
+LIB=		${DESTDIR}/%% target lib directory %%
+LLIB=		${DESTDIR}/%% lint library directory %%
+MAN=		${DESTDIR}/usr/local/man
+
+#
+# set these to compile the library versions with the floating
+# point accelerator
+#
+FPFLAGS=
+FPA=
+
+AR=/bin/ar
+LD=/bin/ld
+RANLIB=/usr/bin/ranlib
+# USG
+#RANLIB=:
+
+I=/usr/include
+S=/usr/include/sys
+L=/usr/include/local
+P=
+
+INCLUDE=%% include file directories %%
+DEBUG=	%% compiler debug/optimize switch %%
+CDEFS=  -D'HOSTTYPE`%% extra arguments for the C compiler %%
+CFLAGS= ${DEBUG} ${FPFLAGS} ${CDEFS} ${INCLUDE}
+
+CNF=	%% configuration files %%
+HDR=	%% header (.h) files %%
+SRC=	%% source (.c) files %%
+HDRg=	%% generated .h files %%
+SRCg=	%% generated .c files %%
+GEN=	${HDRg} ${SRCg} %% other generated non-object files %%
+OBJ=	%% object (.o) files %%
+MAN=	%% the manual page for this tool %%
+DEP=	${SRC} ${SRCg}
+OTHER=	README %% other source files in this directory %%
+SOURCE=	Makefile ${OTHER} ${MAN} ${CNF} ${HDR} ${SRC}
+
+all: profiled ${LIBBASE}.h lib${FPA}${LIBBASE}.a lib${FPA}${LIBBASE}_p.a \
+	llib-l${LIBBASE}.ln
+
+.c.o:
+	${CC} ${CFLAGS} -c -p $*.c && \
+	${LD} -X -r $*.o -o profiled/$*.o && \
+	${CC} ${CFLAGS} -c $*.c && \
+	${LD} -x -r $*.o -o $*.O && mv $*.O $*.o'
+changequote(%,+)
+%lib${FPA}${LIBBASE}.a lib${FPA}${LIBBASE}_p.a:$P ${OBJ}
+	chmod 644 ${OBJ}
+	${AR} cru lib${FPA}${LIBBASE}.a `lorder ${OBJ} | tsort`
+	${RANLIB} lib${FPA}${LIBBASE}.a
+	cd profiled && chmod 644 ${OBJ}
+	cd profiled && ${AR} cru ../lib${FPA}${LIBBASE}_p.a `lorder ${OBJ} | tsort 2> /dev/null`
+	${RANLIB} lib${FPA}${LIBBASE}_p.a
+
+profiled:
+	install -d -m755 $@
+
+llib-l${LIBBASE}.ln:$P ${SRC} ${HDR} ${SRCg} ${HDRg}
+	lint -C`expr $@ : 'llib-l\(.*\)\.ln'` -hxab ${CDEFS} ${INCLUDE} \
+		${DEP} | tee lint.out+
+changequote(%`+,%'+)
+`clean: FRC
+	rm -f lib${FPA}${LIBBASE}.a lib${FPA}${LIBBASE}_p.a llib-l${LIBBASE}.ln *.o profiled/*.o ${GEN} Makefile.bak a.out core errs lint.out tags
+
+deinstall: ${MAN} ${MAN} FRC
+	install -Rl -m444 ${LIB}/lib${FPA}${LIBBASE}.a 
+	install -Rl -m444 ${LIB}/lib${FPA}${LIBBASE}_p.a 
+	install -R -m444 ${INC}/${LIBBASE}.h 
+	install -R -m444 ${LLIB}/llib-l${LIBBASE}.ln 
+	mkcat -r${MAN} -D ${MAN}
+
+depend: ${HDR} ${SRC} ${HDRg} ${SRCg} FRC
+	maketd ${CDEFS} ${INCLUDE} ${DEP}
+
+dirs: ${INC} ${LIB} ${LLIB}
+
+distrib: FRC
+	distrib -c ${LIB}/lib${FPA}${LIBBASE}.a ${LIB}/lib${FPA}${LIBBASE}_p.a ${INC}/${LIBBASE}.h ${LLIB}/llib-l${LIBBASE}.ln HOST
+
+install: all dirs FRC
+	install -cl -m444 lib${FPA}${LIBBASE}.a ${LIB}/lib${FPA}${LIBBASE}.a
+	install -cl -m444 lib${FPA}${LIBBASE}_p.a ${LIB}/lib${FPA}${LIBBASE}_p.a
+	install -c -m444 ${LIBBASE}.h ${INC}/${LIBBASE}.h
+	install -c -m444 llib-l${LIBBASE}.ln ${LLIB}/llib-l${LIBBASE}.ln
+
+fpa_install: profiled lib${FPA}${LIBBASE}.a lib${FPA}${LIBBASE}_p.a dirs FRC
+	install -cl -m444 lib${FPA}${LIBBASE}.a ${LIB}
+	install -cl -m444 lib${FPA}${LIBBASE}_p.a ${LIB}
+
+lint: ${HDR} ${SRC} FRC
+	lint -hxab ${CDEFS} ${INCLUDE} ${SRC}
+
+mkcat: ${MAN} ${MAN} FRC
+	mkcat -r${MAN} ${MAN}
+
+print: source FRC
+	lpr -J"lib${LIBBASE} source" ${SOURCE}
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+	rm -rf profiled
+
+tags: ${HDR} ${SRC} ${HDRg} ${SRCg}
+	ctags -t ${HDR} ${SRC} ${HDRg} ${SRCg}
+
+${INC} ${LIB} ${LLIB}:
+	install -dr $@
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+
+# DO NOT DELETE THIS LINE - make depend DEPENDS ON IT
+
+# *** Do not add anything here - It will go away. ***
+'dnl

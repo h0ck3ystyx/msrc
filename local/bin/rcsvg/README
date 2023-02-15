@@ -1,0 +1,39 @@
+# $Id: README,v 2.3 1997/07/14 23:25:16 ksb Exp $
+
+`RCS version get' grabs a named (rcs -NName: or ci -NName) revision of
+each file in a product copying it out to a stage area.  The stage area is
+constructed to match the product heirarchy exactly.  Symbolc links and
+any directory with an RCS subdirectory are framed in as well.
+
+Input:
+	a symbolic or numeric revision number (rev)
+	an output stage area [/tmp/$rev]
+	a product source tree [.]
+
+Options:
+	the std be-verbose, not-really flags (-v, -n)
+	a previous revision to compare against (-r PreRev)
+
+Output:
+	stdout is some blather about what we found
+	stderr is a report of the files we couldn't find the named
+	   revision for (but we found the previous?)
+
+Todo:
+	add a state to check for all revisions (-s Clean)
+	check for other features we need in common practice
+	describe how this is used in the meta source system
+
+Example:
+	rcsvg -S /tmp/ksb Feb64
+		pull the RCS symbolic revision "Feb64" from all the cached
+		file in "." and copy them to /tmp/ksb.
+
+	rcsvg 1.1 src
+		pull the initial revisions (1.1) of all the cached files in 
+		"src" into /tmp/1.1.
+
+See the meta source papers for details.
+
+--
+ksb

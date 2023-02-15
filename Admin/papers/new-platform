@@ -1,0 +1,94 @@
+# $Id: new-platform,v 1.2 1999/03/31 00:41:02 ksb Exp $
+
+This outline describes the steps to add a new platform to the meta
+source system.  See "msrc-0" for details about the construction of
+the first meta source host (the "master" source machine). -- ksb
+
+It really helps a lot if you have gcc, flex, bison and rdist already
+build and installed before you start this.  Most FreeBSD/LINUX or
+Sun systems do because so many Open Source products need them.
+
+On the master source machine:
+	install a *.cf file for distrib for the new machine
+		(or add the line to one)
+
+Make the target machine root equiv from the master source host.
+	Either in root's .ssh/authorized_keys or root's .rhosts.
+
+	Make root's shell sh compatible (sh, ksh, bash) if you can.
+
+	If you must build rdistd by hand (rdist-6.1.4 or better).
+	See: http://www.MagniComp.com/rdist/
+	Test this with an rdist of /etc/motd to /tmp/motd (or similar).
+
+On the target machine (via a local shell or rdist):
+	install a local.defs file in /usr/local/lib/distrib/local.defs
+		PATH must contain sh, cc [gcc?], make, and install
+		SHELL mush be /bin/sh compatible [ksh is OK]
+		umask 022 or as apropos
+
+	Add the "source" group you need
+		source:*:810:
+	Optionally add the group "charon" for file entombing
+		charon:*:602:
+	Optionally add the login "charon" for file entombing
+		charon:*:11520:602:The Ferryman,Admin,588-2300,:/home/amdin/Tomb:/nonexistant
+
+	build /usr/src/local/{bin,lib,etc}
+	build /usr/local/{bin,lib,etc,man,lib/distrib}
+		umask 002
+		mkdir -p /usr/src/local/bin /usr/src/local/lib
+		mkdir -p /usr/src/local/etc
+		umask 022
+		mkdir -p /usr/local/bin /usr/local/lib /usr/local/etc
+		mkdir -p /usr/local/man /usr/local/lib/distrib
+	fix the modes on those:
+		chgrp source /usr/src/local /usr/src/local/*
+		chmod g+s /usr/src/local /usr/src/local/*/
+
+On the master source machine:
+	make for the host in all in:
+		mkcmd's lib/mkcmd
+		install's lib/install.cf
+		mkcmd's bin/mkcmd
+		install's bin/install.d
+
+	make install for:
+		install's bin/install.d
+		mkcmd's bin/mkcmd
+		mkcmd's lib/mkcmd
+		distrib's etc/distrib
+
+	make optional tools:
+		gcc		[if no vendor one is installed cross compile it]
+		flex		[if no vendor lex]
+		bison		[if no vendor yacc]
+		gzip	
+		rcs		[if no vendor rcs co/ci/rlog/...]
+		man		[if no vendor man (from msrc/ucb/man)]
+		purge
+		instck
+		tpsh
+		distrib (+ lib)
+		rcsvg
+		xapply
+		mk (+ lib)
+		less
+		untmp
+		conserver
+		console
+		x3270
+
+build bogus libs:
+		libptm
+		libsrtunq
+		datecut
+
+back to bin:
+		maketd
+		labstat
+
+optional etc
+		labd
+		labc
+		labwatch

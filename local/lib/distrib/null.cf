@@ -1,0 +1,3 @@
+# $Id: null.cf,v 4.0 1997/09/01 15:08:21 ksb Exp $
+# an empty distrib.cf for the support tools directory -- ksb
+#localhost	localhost	.	.	.

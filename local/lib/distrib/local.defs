@@ -1,0 +1,21 @@
+# $Id: local.defs,v 4.2 1997/07/14 21:56:18 ksb Exp $
+#
+# We set umask because not all sites set one on inetd (you should).
+umask 022
+#
+# In PATH we might have to include "/usr/ccs/bin" or "/opt/gnu/bin" to
+# find a C compiler.
+PATH=/usr/local/bin:/usr/local/etc:$PATH:/opt/fedex/support/bin:/opt/fedex/support/etc
+export PATH
+#
+# We might have to set SHELL to /bin/sh or /sbin/sh or some such to
+# get make to work if root hass a shell of /bin/csh or some other broken
+# shell
+#SHELL=/bin/sh
+#
+# We might have to set some license server token for cc?
+#
+# We might call "logger" to note the msrc use on this host.
+#
+# NEVER exit HERE (unless you want to stop all msrc builds on this host
+# we are included with a "." command from the make command line)!

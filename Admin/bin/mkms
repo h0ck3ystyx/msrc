@@ -1,0 +1,81 @@
+#!/bin/ksh
+Id='$Id: mkms,v 2.1 1997/10/26 17:40:32 ksb Exp $'
+# Prototype to make a master source dir from an _empty_ directory
+# Run this, then copy in the source and finish the configuration.	(ksb)
+#
+
+PROGNAME=`basename $0 .ksh`
+T=/usr/msrc/Admin/master
+
+if [ ! -d "$T" ] ; then
+	echo "$PROGNAME: no template directory found here" 1>&2
+	echo "$PROGNAME: (looked in $T)" 1>&2
+	exit 2
+fi
+
+case _"$1" in
+_-h|_--help)
+	cat <<!
+$PROGNAME: usage [type]
+$PROGNAME: usage -h
+$PROGNAME: usage -V
+type  the type of product to configure
+h     provide this help message
+V     show version and type information
+!
+	exit 0 ;;
+_-V|_--version)
+	cat <<!
+$PROGNAME: $Id
+$PROGNAME: templates from $T
+!
+	cd $T && ( echo "Pick type from"; ls [a-z]* )
+	exit 0 ;;
+esac
+
+count=`/bin/ls -1 . | grep -v RCS | wc -l`
+
+if [ "$count" -gt 0 ] ; then
+	echo "$PROGNAME: directory should be empty to start"
+	exit 3
+fi
+
+cp $T/Makefile ./Makefile
+cp $T/Distfile ./Distfile
+cp $T/${1:-gnu} ./Make.host
+chmod +w Distfile Makefile Make.host
+
+# this is Quite Clever, make the directory and copy the modes to
+# the RCS directory from . -- ksb
+[ -d RCS ] || {
+	mkdir RCS
+	echo "." | cpio -pdm RCS 2>&1 | grep -v blocks
+}
+
+sed -e 's/ZIdZ/Id/' >README <<!
+# \$ZIdZ\$
+
+%% put in your comments here %%
+--
+${USER-${LOGNAME-`whoami`}}
+!
+
+echo "distribute source" | rcs -i -q Distfile
+echo "explain the need" | rcs -i -q README
+echo "send source to platform" | rcs -i -q Makefile
+echo "compile source on platform" | rcs -i -q Make.host
+
+vi +'/%%' Distfile README Makefile Make.host
+
+for vic in Distfile README Makefile Make.host
+do
+	if grep -s "%%.*%%" $vic ; then
+		echo "$vic not fully configured, re-edit and ci"
+	else
+		ci -u -q $vic
+	fi
+done
+
+/bin/ls -las .
+
+exit 0

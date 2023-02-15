@@ -1,0 +1,53 @@
+<HTML>
+<TITLE>Backwards in time to Meta source</TITLE>
+<BODY>
+<PRE>
+$Id: meta.html,v 1.3 1997/07/15 00:05:52 ksb Exp $
+</PRE>
+
+<A name="rcsvg">
+<H2>The product that warps time -- rcsvg</H2>
+</A>
+<P>
+After testing we have a "perfect" release of a product. (At least that's
+what we tell the managers.)
+If we mark the RCS revisions that compose each version of each
+product that makes up the software subsystem that we are releasing
+we can get back to that version with the RCS command "co" (check out).
+<P>
+Of course if we have many directories in a heirarchy it might be
+hard to recreate the whole without making a typeo.  We could build
+a makefile to do the work with <CODE>mkdir</CODE>, <CODE>co</CODE>,
+<CODE>chmod</CODE> and the like.
+<P>
+This would get unmanagable if the symbolic names for the various parts
+of the system were not well structured, or if the source caches were
+scattered about the filesystem.
+<P>
+<CODE>Rcsvg</CODE> is an interface to RCS to do all this work of
+recovering a marked state in the RCS cache files in a single command.
+
+
+<A name="makefile">
+<H2>Additions to a master source Makefile</H2>
+</A>
+<P>
+The new target "stage"  in
+the meta source makefiles (Package level) add the ability to form
+packages of related products that can be built as a unit.
+
+<P>
+A "clean" operation undoes the stage operation.
+
+<A name="tracking">
+<H2>Problem tracking</A>
+</A>
+<P>
+At the package level we can track outstanding bugs or design limits
+in a TODO list.  These lists cross product boundries to include
+changes in more than one product.
+
+<HR>
+<A href="nfs.html">Next Page</A></H2>
+</BODY>
+</HTML>

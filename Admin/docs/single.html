@@ -1,0 +1,219 @@
+<HTML>
+<TITLE>Working from a single platform down</TITLE>
+<BODY>
+<PRE>
+$Id: single.html,v 1.3 1997/07/15 00:07:44 ksb Exp $
+</PRE>
+
+<H1>Starting at the single platform</H1>
+<P>
+If we limit our view (for the time being) to a single target platform we 
+can build an understanding for what must lay
+before us. (Yes, I mean that both ways.)
+
+<H2>From the `Net</H2>
+<P>
+The standard Internet package one might pluck from an FTP
+archive has:
+<UL>
+<LI>a "Configure" script [maybe]
+<LI>an "INSTALL" or "README" set of instructions
+<LI>a make(1) "Makefile" to construct the product
+<LI>a set of C source files (implementation and header files)
+<LI>some yacc/lex or some other helper input [maybe]
+<LI>some documentation [hopefully]
+</UL>
+
+<P>
+Of these the "INSTALL" and "README" files are useless to any automation.
+The "Configure" script falls back to an interactive mode if it has
+any choices to make (which makes it hard to automate without "expect").
+
+<A name="makefile">
+<P>Starting with the "Makefile" (sometimes spelled "makefile") we
+have some structure that supports automation.
+We are going to assume some <EM>cultural</EM> structure is in place
+(or can be added with minimal cost) to each make(1) description:</A>
+
+<UL>
+<LI>Install all the 
+<A href="make.html">standard targets</A>.
+
+<LI>Split CFLAGS (or related macros for other compilers into the three
+orthogonal components (CDEFS, DEBUG, INCLUDE).
+This allows us to tune compilation from the command line (or other
+processors) for debugging or compiler type without knowing the include
+path.
+
+<LI>Include a -D<I>type</I> in CDEFS where <I>type</I> is a
+short descriptive name for the current platform.
+
+<LI>Check the final load line for any special libraries needed.
+In addition
+some loaders need a funny option (-z, -h) or search path option (-L).
+</UL>
+
+<P>
+This should yield a make(1) description that gives us the invariants
+that we need:
+<OL>
+<LI>builds the product without human intervention
+<LI>fits the existing make(1) culture (macro and target names)
+<LI>allows the leverage we need to refine it later
+<LI>supports the culture we are building
+</OL>
+
+<P>After this customization to the Makefile we should not need any
+"Configure" script to build the product on this (single) platform.
+We may have found a feature the product needs that the
+platform doesn't provide (like strstr(3)).
+
+<H1>Emulations and Property Attributes</H1>
+
+<P>It might be appropriate to include emulation code in a canonical
+file to be carried with this source.
+
+<A name="machine_h">
+<H3>Header files used to map <I>types</I> to <I>properties</I></H3>
+</A>
+<P>Some emulations are so small that they can even be done in a C
+header file.
+We use a "machine.h" file to map emulations needed and facilities supported,
+on a platform basis, to
+<EM>property</EM> based attributes.
+
+<P>
+This file maps the <I>type</I> that the Makefile passes in as a cpp(1)
+macro to many property macros thusly:
+<PRE><CODE>
+	#if !defined(HAVE_<I>property</I>)
+	#define HAVE_<I>property</I>	(defined(<I>type</I>)||defined(<I>type</I>))
+	#endif
+</CODE></PRE>
+
+<A name="kinds">
+<P>There are a few distinct kinds of properties.
+</A>
+<UL>
+<LI>HAVE_<I>property</I> -- this platform has a facility that others might not.
+<LI>USE_<I>property</I> -- this platform might have many ways to get this
+service, we pick this property over any other.
+<LI>NEED_<I>property</I> -- we are requesting "machine.h" to build an
+emulation for this facility.
+<LI>BIN_<I>program</I> -- this is the full path to a program
+<LI>PATH_<I>file</I> -- this is the full path to a configuration file
+<LI>HAS_<I>property</I> -- just like HAVE_<I>property</I>, but older
+<LI>BROKEN_<I>property</I> -- do not use this facility here
+<LI>PATCH_LEVEL -- a special one we reserve for patch(1) use
+<LI>DEF_<I>property</I> -- a default value which might tune per platform
+</UL>
+
+<A name="machine_c">
+<H3>C coded emulations</H2>
+
+<P>
+Additional emulations are larger (but still small) so we have to make a
+C source file to keep those.
+We use a "machine.c" file to
+emulate facilities that the platform is missing.
+This file has emulations which are triggered by code which
+looks like:</A>
+<PRE><CODE>
+	#if NEED_<I>property</I>
+	/* emulation code for the hollow tree routine
+	 */
+	is_hollow(....)
+	{
+	}
+	#endif /* <I>property</I> emulation */
+</CODE></PRE>
+
+<A name="file_c">
+<H3>Production C code (declarations)</H3>
+</A>
+<P>
+By including the "machine.h" file in each C source file plus some
+standard system includes we provide just enough leverage to
+decide which facility to choose to gain the functions we need to
+implement the product at hand.
+<P>
+After we know which facility we are using we may need to declare, define
+or include parts.
+This looks like:
+<PRE><CODE>
+	#if NEED_<I>property</I>
+	#include <shallow.h>
+
+	SHALLOW *pSHRoot;
+	#endif
+</CODE></PRE>
+
+<P>
+Since "machine.h" mapped the HOSTTYPE to a property macro we
+should always use the property here.
+
+<A name="Cusage">
+<H3>Production C code (usage)</H3>
+</A>
+At the actual use of the facility we may need some more leverage
+(preferably we map 2 facilities into a common calling convention, but
+sometimes we can't).
+When we can't fold them they look like this:
+<PRE><CODE>
+	#if HAVE_FCHOWN
+		if (-1 == fchown(fdThis, 0, -1)) {
+			...
+		}
+	#else
+		if (-1 == chown(pcThis, 0, -1)) {
+			...
+		}
+	#endif
+</CODE></PRE>
+
+<A name="libs">
+<H3>Special Libraries</H3>
+</A>
+Any libraries which are needed on just this platform (like -lgen)
+or special library search paths (-L/usr/local/lib) need to be put
+directly on the load line (not in a macro by CFLAGS).
+
+<A name="mkcat">
+<H3>Documentation, manual pages</H3>
+</A>
+The program <EM>mkcat</EM> has been constructed to install manual pages.
+It is presently under revision but should be complete by fall 2000.
+
+<A name="rcs">
+<H3>Source code kept under RCS</H3>
+</A>
+No files will be kept on a platform source machine under RCS, unless
+extreme unction has been granted by the Tech Advisor.
+In that strange case the RCS cache directory will most likely
+<STRONG>not</STRONG> reside under /usr/src.
+
+<A name="install">
+<H3>Install the product</H3>
+</A>
+A safer version of install is available.  Use it.
+
+<A name="distrib">
+<H3>Distribution to like machine</H3>
+</A>
+This is the other job for distrib.
+Distrib's -c option may be used to transmit files to like peer platforms.
+Thus we compile on one representative machine for each platform type
+and distribute the code to all her friends.
+
+
+<H2>The results for a single platform</H2>
+With this paradigm we have build a clear path to port to other platforms.
+By mapping the property macros for a new HOSTTYPE we should only have to
+update "machine.h" and change the libraries and -D<I>type</I> in the Makefile.
+<P>
+The remainder of this document builds on that abstraction to automate it.
+
+<HR>
+<A href="master.html">Next Page</A></H2>
+</BODY>
+</HTML>

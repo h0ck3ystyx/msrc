@@ -1,0 +1,11 @@
+# $Id: TODO,v 2.3 1999/01/19 17:19:17 ksb Exp $
+
+If a file has a RCS cache "file,v" and another "RCS/file,v" we
+should find and complain better.  We take the toplevel one last
+and overwrite the RCS/file,v's output.  This is the opposite of
+what I want.  This should be a fatal error (#33).
+
+Preserve the +x bits on files co'd (-m does it now).
+
+--
+ksb

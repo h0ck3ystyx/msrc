@@ -1,0 +1,69 @@
+`#	$Id: Make.host,v 4.4 2000/06/20 14:07:23 ksb Exp $
+#
+#	Makefile for distrib lib
+#
+
+SHELL=/bin/sh
+PROG=	distrib
+LIB=	${DESTDIR}'ifdef(`DSPD_SUPPORT',
+`/opt/fedex/support/lib/distrib',`/usr/local/lib/distrib')`
+DOC=	${DESTDIR}/usr/man
+
+SRCl=	distrib.cf local.defs
+MAN=	distrib.cf.man
+OTHER=	README
+SOURCE=	Makefile ${OTHER} ${MAN} ${SRCl}
+
+all: ${SRCl}
+
+boot: all dirs FRC
+	cp distrib.cf local.defs ${LIB}
+	chmod 0644 ${LIB}/distrib.cf  ${LIB}/local.defs
+
+clean: FRC
+	rm -f Makefile.bak a.out core errs lint.out tags
+
+deinstall: ${MAN} ${DOC} FRC
+	for dink in ${SRCL} ;\
+	do \
+		install -Rm 644 ${LIB}/$$dink ;\
+	done
+	mkcat -r${DOC} -D ${MAN}
+
+depend: FRC
+
+dirs: ${LIB}
+
+distrib: FRC
+	distrib -c ${LIB} HOST
+
+install: all dirs FRC
+	install -cm 644 ${SRCl} ${LIB}
+
+lint: FRC
+
+mkcat: ${MAN} ${DOC} FRC
+	mkcat -r${DOC} ${MAN}
+
+print: source FRC
+	lpr -J"${PROG} library source" ${SOURCE}
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+tags: FRC
+
+${LIB}:
+	mkdir -p $@
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+
+# DO NOT DELETE THIS LINE - make depend DEPENDS ON IT
+
+# *** Do not add anything here - It will go away. ***
+'dnl

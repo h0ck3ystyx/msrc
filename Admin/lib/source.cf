@@ -1,0 +1,10 @@
+.	drwxrwsr-x	*	source		-
+RCS	"		"	"		"
+bin	"		"	"		"
+lib	"		"	"		"
+etc	"		"	"		"
+doc	"		"	"		"
+core	!0		*	*		-
+a.out	!755		*	*		-
+errs	!644/020	*	*		-
+*	-r??r??r-?	*	source		-

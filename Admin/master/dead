@@ -1,0 +1,23 @@
+`#$Id: dead,v 2.2 1997/10/26 14:56:36 ksb Exp $
+#
+#	dead master directory
+#	[this directory should never be installed/updated]
+
+OTHER=	README %% other files in this directory %%
+SOURCE= Makefile ${OTHER}
+
+all calls deinstall depend dirs distrib install lint mkcat print tags: FRC
+
+clean: FRC
+	rm -f Makefile.bak a.out core errs lint.out tags
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+'dnl

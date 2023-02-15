@@ -1,0 +1,82 @@
+# $Id: distrib.cf,v 1.21 1999/03/12 16:17:22 ksb Exp $
+#	a list of the machines admin'd from svr6
+#
+RDISTD_PATH="/usr/local/bin/rdistd"
+svr6.dscm.fedex.com	svr6		HPUX9	905	yes
+svr5.dscm.fedex.com	svr5		HPUX9	905	.
+css-srv1.prod.fedex.com	css-srv1	HPUX9	905	.
+depot.dspd.fedex.com	depot		HPUX9	905	.
+#chalktalk.dpd.fedex.com	chalktalk	HPUX9	905	.
+consit.prod.fedex.com	consit		HPUX9	905	.
+RDISTD_PATH="/usr/ucb/rdistd"
+arc1.dscm		arc1.dscm	IBMR2	30205	.
+RDISTD_PATH="/usr/local/bin/rdistd"
+s01.sa			s01		HPUX9	905	.
+#s02.sa			s02		HPUX9	905	.
+s03.sa			s03		HPUX9	905	.
+goku.sac		goku		HPUX9	905	.
+gohan.sac		gohan		HPUX9	905	.
+#bulma.sac		bulma		HPUX9	905	.
+s06.sa			s06		HPUX9	905	.
+s07.sa			s07		FREEBSD	225	.
+g01.sa			g01		FREEBSD	226	.
+g02.sa			g02		FREEBSD	226	.
+g03.sa			g03		FREEBSD	226	.
+g04.sa			g04		FREEBSD	226	.
+g05.sa			g05		FREEBSD	226	.
+g06.sa			g06		FREEBSD	226	.
+g07.sa			g07		FREEBSD	226	.
+g08.sa			g08		FREEBSD	226	.
+hpa2.dscm		hpa2		HPUX10	1020	.
+gallows.dpd		gallows		HPUX10	1020	.
+w01.sac			w01		FREEBSD	20205	.
+h01.dspd		h01		FREEBSD 20205	.
+w12.sac			w12		FREEBSD	20207	.
+zippy.sac.fedex.com	zippy		FREEBSD 20205	.
+phoenix.sac		phoenix		FREEBSD	20600	.
+h05.dspd		h05		FREEBSD	20207	.
+hamster.sac		hamster		FREEBSD 20205	.
+w10.sac			w10		FREEBSD	20206	.
+w11.sac			w11		FREEBSD	20107	.
+pokey.dpd.fedex.com	pokey		FREEBSD	20105	.
+trixie.sac.fedex.com	trixie		HPUX9	905	.
+zveegee.sac.fedex.com	zveegee		HPUX9	905	.
+groobee.sac.fedex.com	groobee		HPUX9	905	.
+tara.sac.fedex.com	tara		HPUX9	905	.
+minga.sac.fedex.com	minga		HPUX9	905	.
+nopey.sac.fedex.com	nopey		HPUX9	905	.
+puffball.sac.fedex.com	puffball	HPUX9	905	.
+vulcan.sac.fedex.com	vulcan		FREEBSD 20205	.
+kachina.dpd.fedex.com	kachina		FREEBSD	20105	.
+nt1.dspd		nt1		HPUX9	905	.
+sparky.dspd		sparky		HPUX9	905	.
+picketc.dspd		picketc		FREEBSD	20106	.
+build.sac		build		SUN5	20600	.
+y2k.sac.fedex.com	y2k		SUN5	20600	.
+sonos.sac.fedex.com	sonos		SUN5	20700	.
+temp1.sa		temp1		SUN5	20600	.
+temp2.sa		temp2		SUN5	20600	.
+temp3.sa		temp3		SUN5	20600	.
+temp4.sa		temp4		SUN5	20600	.
+ldaptest.sac		ldaptest	SUN5	20600	.
+RDISTD_PATH="/usr/bin/rdistd"
+dspd03			dspd03		IBMR2	30205	.
+w02.sac			w02		FREEBSD	20600	.
+h02.dspd		h02		FREEBSD	20100	.
+w06.dspd		w06		FREEBSD	20100	.
+w08.dspd		w08		FREEBSD	20100	.
+RDISTD_PATH="/usr/local/bin/rdistd"
+w07.dspd		w07		FREEBSD	20205	.
+dial.dspd		dial		FREEBSD	20100	.
+RDISTD_PATH="/opt/fedex/support/bin/rdistd"
+gateit02.prod.fedex.com	gateit02	HPUX9	905	.
+RDISTD_PATH="/usr/local/bin/rdistd"
+it1003			it1003		IRIX5	602	.
+griffon.dis		griffon		ULTRIX4	402	.
+#master.dspd		master		HPUX9	905	.
+#turon.dspd		turon		HPUX9	905	.
+helga.emea.fedex.com	helga		HPUX10	1020	.
+brusrv1.emea.fedex.com	brusrv1		HPUX10	1020	.
+einstein.corp.fedex.com	einstein	HPUX10	1030	.
+enqa.corp.fedex.com	enqa		HPUX10	1020	.
+RDISTD_PATH=.

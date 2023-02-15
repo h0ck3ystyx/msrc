@@ -1,0 +1,52 @@
+<HTML>
+<TITLE>Tools</TITLE>
+<BODY>
+<PRE>
+$Id: tools.html,v 1.3 1997/07/15 00:05:52 ksb Exp $
+</PRE>
+
+<H1>Utilities which work with this organization</H1>
+<P>
+Some C programs and shell scripts make it a lot easier to
+run a master source (or meta source) pool.
+While none of these are (strictly) mandatory they are enabling
+technologies for certain.
+<P>
+Even the <I>rdist></I> front end, distrib, could be replaced by
+some in-line shell code (which I will <A href="#joke">not include here</A>).
+
+
+<H2Needed></H2>
+<P>
+These are referenced in the baseline Makefile and Make.host files.
+<H3>rcsvg</H3>
+<P>
+See the <A href="rcsvg.html">manual page</A> on rcsvg.
+<H3>distrib</H3>
+<P>
+See the <A href="distrib.html">manual page</A> on distrib.
+
+<H2>While building research</H2>
+<P>
+I came up with some small but useful shell scripts.
+
+<H3><A name="mkremote">mkremote</A></H3>
+<P>
+<CODE>Mkremote</CODE> has been replaced by <CODE>makeme</CODE> in the
+msrc0 release system.
+
+<HR>
+<A name="joke">
+<P>
+Actually you loose the @file@ extension which pretty much
+shoots Make.host in the foot, and you have to replace it with
+much more logic in the Makefile and dependencies that make
+the current stock look like a walk in the park.
+<P>
+Don't even think about it.
+</A>
+
+<HR>
+<A href="summary.html">Next Page</A>
+</BODY>
+</HTML>

@@ -1,0 +1,77 @@
+.\"  $Id: distrib.cf.man,v 4.1 1996/10/16 02:28:42 kb207252 Exp $
+.TH DISTRIB 5L PUCC
+.SH NAME
+distrib \- host distribution database
+.SH SYNOPSIS
+\fB%\fP\fIHOST SHORTHOST HOSTTYPE HOSTOS HASSRC\fP
+.br
+.SH DESCRIPTION
+The
+.I distrib
+front end for
+.IR rdist (1)
+reads a configuration file that contains a list of host names and
+host types then runs \fIrdist\fP for a subset of those hosts.
+This manual page describes the format of that database.
+.PP
+Host attributes specified in a distrib configuration file
+may include the host name, abbreviated host name, a moniker
+for the hosts type (vendor hardware and operating system),
+a string representing the release of the operating system and
+a flag to mark "source hosts".
+.PP
+All of these listed above comprise the default format for a
+host database.  This default may be augmented or overridden by
+the installer in a number of ways.
+.PP
+In addition to the attributes provided in the configuration file
+distrib itself assigned meaning and a value to 2 attributes
+provided for comparison:
+\fBMYTYPE\fP (the host type)
+and \fBMYOS\fP (the os) of the host running \fIdistrib\fP,
+.PP
+The configuration file may also contain any sequence of the
+folowing:
+.TP
+# comments
+Any line starting with a octothorp (#).
+.TP
+blank lines
+Blank lines are ignored.
+.TP
+\fIattribute\fP\fB="\fP\fIvalue\fP\fB"\fP
+Assigned a fixed value to a attribute until that attribute is
+reassigned or unset.
+.TP
+\fIattribute\fP\fB=.\fP
+Unset the attribute.
+.TP
+\fB%\fPcolumn headers
+A line introducing new attribute columns starts with a percent and
+contains only white space and macro names.  
+.TP
+host-definitions
+Any other line must have the same number of columns as the most
+recent column headers line (or the default one given by \fIdistrib\fP
+\fB\-V\fP).  Such a line defines a unquie host in the database.
+
+.SH NOTES
+The current host should be in the configuration file so that
+.I distrib
+can find the default type of host to update.
+.SH BUGS
+.SH
+Under EPIX \fIhostname\fP(1) returns only the first part of the full
+domain name for the host.  \fIDistrib\fP trys to make rdist do the
+correct thing anyway (with little success).  To make -m's to the current
+host work, on such machines the HOST macro is the same string as the
+SHORTHOST macro (for the local machine only) {what a kludge}.
+
+.SH AUTHORS
+Kevin S. Braunsdorf  
+.br
+Federal Express Corp.
+.br
+ksb@fedex.com
+.SH SEE ALSO
+m4(1), distrib(8)

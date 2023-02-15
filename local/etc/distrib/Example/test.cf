@@ -1,0 +1,32 @@
+#
+# $Id: test.cf,v 4.0 1996/02/27 21:48:18 kb207252 Exp $
+#
+# test configuration file for /usr/local/etc/distrib
+#
+# official		Short 	 CPU	OS Rev		has
+# Hostname		Hostname Type	Revision	source
+#
+mentor.cc.purdue.edu	mentor	 S81	302		yes
+expert.cc.purdue.edu	expert	 S81	302		.
+sage.cc.purdue.edu	sage	 S81	302		.
+tyro.cc.purdue.edu	tyro	 S81	302		.
+staff.cc.purdue.edu	staff	 SUN3	40103		yes
+element.cc.purdue.edu	element	 SUN3	40103		.
+pop.stat.purdue.edu	pop	 SUN3	40103		.
+picasso.cc.purdue.edu	picasso	 HPUX7	700		yes
+degas.cc.purdue.edu	degas	 HPUX7	700		.
+durer.cc.purdue.edu	durer	 HPUX7	700		.
+vangogh.cc.purdue.edu	vangogh	 HPUX7	700		.
+boiler.cc.purdue.edu	boiler	 ETA10	103		kinda
+HELPER="timed"
+rapid.cc.purdue.edu	rapid	 IBMR2	401		yes
+oasis.cc.purdue.edu	oasis	 IBMR2	401		.
+curator.cc.purdue.edu	curator	 IBMR2	401		.
+franklin.cc.purdue.edu	franklin IBMR2	401		.
+HELPER=.
+#
+# N.B. anything other than a "." is true to has source and
+# you can assign meanings to "kinda" and "yes" in your installation.
+#
+# The "HELPER" example m4 macro is set for all four IBMR2 hosts, but
+# none other (the fake assignment of dot unsets the macro).

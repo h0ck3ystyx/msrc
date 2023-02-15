@@ -1,0 +1,23 @@
+`#$Id: Make.host,v 1.1 1997/07/14 23:34:28 ksb Exp $
+#
+#	dead platform directory
+#	[this directory should never be installed/updated]
+
+OTHER=	README
+SOURCE= Makefile ${OTHER}
+
+all calls deinstall depend dirs distrib install lint mkcat print tags: FRC
+
+clean: FRC
+	rm -f Makefile.bak a.out core errs lint.out tags
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+'dnl

@@ -1,0 +1,13 @@
+# $Id: README,v 1.1 1997/07/14 23:32:45 ksb Exp $
+
+This is the local level we include so all these product end up
+in the right place if you unpack the file at /usr/msrc.  Almost all
+the other packages are built from /usr/msrc/local so you will clobber
+this file with the README file from each subsequent package as you
+unpack them.
+
+You can extract packages under /usr/msrc/Pkgs/name and that works as well
+(that way you don't clobber the READMEs).
+
+--
+ksb

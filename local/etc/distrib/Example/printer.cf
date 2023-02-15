@@ -1,0 +1,13 @@
+# $Id: printer.cf,v 4.0 1996/02/27 21:49:17 kb207252 Exp $
+# Use
+#	$Compile: echo "PRINTER is a TYPE in LOCATION" | distrib -aC %f -E -f -
+# to see this in action
+#
+# we change the m4 macro colunms here with the little known
+# distrib trick
+# HOST is used as the printer name, but PRINT should work in m4 file
+PRINTER="HOST"
+%HOST		TYPE		LOCATION	OWNER
+larry		PostScript	East_420	bob
+curly		Versa		Lab_2120	.
+moe		chain		.		ops

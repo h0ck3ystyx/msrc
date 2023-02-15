@@ -1,0 +1,192 @@
+#!/bin/ksh
+# $Id: smsrc,v 2.6 2000/07/14 18:55:48 ksb Exp $
+# Hack the master source for firewall usage -- ksb
+# now we know project and can take a better environment, ideas from lebo
+#
+PROGNAME=`basename $0`
+usage="$PROGNAME: usage [-H] [-C param] [-P proj] [targets]
+$PROGNAME: usage -h
+$PROGNAME: usage -V"
+
+LOOP="-for i in \`distrib -H \${MDEFS} \${HOSTS}\` ; do \\
+		echo \$\$i: ;\\
+		ssh -x \$\$i -n sh -c '\". /usr/local/lib/distrib/local.defs && cd \${INTO} && \${MAKE} \\\"DESTDIR=\${DESTDIR}\\\" \\\"DEBUG=\${DEBUG}\\\" \\\"ARGS=\${ARGS}\\\" \$@\"' ;\\
+	done"
+
+slide='P=$1; shift; set _ -`expr "$P" : '\''-.\(.*\)'\''` ${1+"$@"}; shift'
+param='if [ $# -lt 2 ]; then echo "$PROGNAME: missing value for $1" 1>&2 ; exit 1; fi'
+
+# default values for all the flags, or leave unset for a ${flag-value) form
+# (you should set SMSRC=-Cdmz.cf for most FedEx firewall hosts -- ksb)
+PROJ=""
+DCONF="dmz.cf"
+HFLAG=false
+
+# read an environment variable as well as the command line options:
+# protect this script from leading -x's with a bogus underbar, then remove it
+set _ $SMSRC ${1+"$@"}
+shift
+
+# get the options from the command line (+ any variables)
+while [ $# -gt 0 ]
+do
+	case "$1" in
+	-H)
+		HFLAG=true
+		shift
+		;;
+	-H*)
+		HFLAG=true
+		eval "$slide"
+		;;
+	-C)
+		eval "$param"
+		DCONF=$2
+		shift ; shift
+		;;
+	-C*)
+		DCONF=`expr "$1" : '-.\(.*\)'`
+		shift
+		;;
+	-P)
+		eval "$param"
+		PROJ=$2
+		shift ; shift
+		;;
+	-P*)
+		PROJ=`expr "$1" : '-.\(.*\)'`
+		shift
+		;;
+	HOSTS=*)
+		TP=`expr "$1" : 'HOSTS=\(.*\)'`
+		shift
+		set _ $TP ${1+"$@"}
+		shift
+		;;
+	-[Gmt])
+		eval "$param"
+		HSPEC="${HSPEC} $1 $2"
+		shift ; shift
+		;;
+	-[Gmt]*)
+		HSPEC="${HSPEC} $1"
+		shift
+		;;
+	-[Sa])
+		HSPEC="${HSPEC} `expr $1 : '\(..\).*'`"
+		eval "$slide"
+		shift
+		;;
+	--)
+		shift
+		break
+		;;
+	-V|-V*)
+		echo "$PROGNAME: "'$Id: smsrc,v 2.6 2000/07/14 18:55:48 ksb Exp $'
+		exit 0
+		;;
+	-h|-h*)
+		cat <<HERE
+$usage
+C conf  specify a dmz.cf for distrib tables
+H	show hosts in project
+P proj	specify hosts base on PROJECT macro
+h	print this help message
+targets	target or options to make
+HERE
+		exit 0
+		;;
+	-*)
+		echo "$usage" 1>&2 
+		exit 1
+		;;
+	*)
+		# process and continue for intermixed options & args
+		break
+		;;
+	esac
+done
+
+case ${DCONF} in
+/*)	;;
+*)	if [ -f "/usr/local/lib/distrib/$DCONF" ] ; then
+		DCONF="/usr/local/lib/distrib/$DCONF"
+	fi
+	;;
+esac
+
+# If no project given try to figure out the HOSTS macro			(ksb)
+#	HOSTS=-mtyro		# take tyro from the default distrib.cf
+#	HOSTS=-aCother.cf	# take all hosts from other.cf
+#	HOSTS=-tSUN6		# take all SUN6 hosts on the dmz
+# ignored when project is set...
+if [ ! -z "$HSPEC" ] ; then
+	HOSTS="-C$DCONF $HSPEC"
+elif [ -z "$PROJ" ] ; then
+	HPARAM="$HSPEC"
+
+	# make spell to find -C option distrib is using
+	TEMP=/tmp/msk$$
+	cat >${TEMP} <<\!
+print:
+	distrib -C${DCONF} ${HOSTS} -V | \
+	sed -n -e "s/.*using configuration from \`\(.*\)'\$$/\1/p"
+!
+
+	for word
+	do
+		value=`expr "$word" : "HOSTS=\(.*\)"` || continue
+		HCONF=`${MAKE-make} -s "DCONF=${DCONF}" "$word" -f ${TEMP} print`
+		if [ -z "$HCONF" ] ; then
+			:
+		elif [ -n "$DCONF" -a _"$DCONF" != _"$HCONF" ] ; then
+			echo "$PROGNAME: -C in hosts doesn't match command line ($HCONF != $DCONF)" 1>&2
+			HPARAM=$value
+		else
+			HPARAM=$value
+			DCONF=$HCONF
+		fi
+		break;
+	done
+	HOSTS="-C$DCONF ${HPARAM:--a}"
+elif [ -z "$DCONF" ] ; then
+	echo "$PROGNAME: no default configuration" 1>&2
+	exit 2
+else
+	HOSTS="-C$DCONF -a"
+fi
+
+# we need this to list the hosts for xapply usage -- ksb
+if $HFLAG ; then
+	if [ -n "$PROJ" ] ; then
+	exec distrib $HOSTS -E -f - <<!
+ifelse(PROJECT,$PROJ,\`HOST
+')dnl
+!
+	else
+		exec distrib $HOSTS -H
+	fi
+fi
+
+# Reformat to -mh1,h2,h3 to emulate -Pproject in distrib.
+#
+if [ -n "$PROJ" ] ; then
+	distrib $HOSTS -E -f - <<! |&
+ifelse(PROJECT,$PROJ,\`SHORTHOST
+')dnl
+!
+	SEP="-m"
+	while read -p FOUND ; do
+		MLIST=$MLIST$SEP$FOUND
+		SEP=","
+	done
+
+	if [ -z "$MLIST" ] ; then
+		echo "$PROGNAME: $PROJ: no host in $DCONF"
+		exit 1
+	fi
+	HOSTS="$MLIST -C$DCONF"
+fi
+${MAKE-make} LOOP="$LOOP" HOSTS="$HOSTS" ${1+"$@"}
+
+exit 0

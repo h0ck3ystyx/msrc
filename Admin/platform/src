@@ -1,0 +1,15 @@
+#	$Id: src,v 2.3 1997/10/26 10:29:05 ksb Exp $
+#
+#	Makefile for %% directory of plaform source files %%
+#
+
+SOURCE=	Makefile %% README %%
+
+all clean depend install lint print source spotless tags: FRC
+	echo "see /usr/src/Pkgs for package build info"
+
+
+${SOURCE}:
+	co -q $@
+
+FRC:

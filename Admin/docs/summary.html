@@ -1,0 +1,33 @@
+<HTML>
+<TITLE>Summary of the new source organization</TITLE>
+<BODY>
+<PRE>
+$Id: summary.html,v 1.3 1997/07/15 00:05:52 ksb Exp $
+</PRE>
+
+<H1>What we've arrived at</H1>
+<P>
+The new source organization depends on a three pronged attack:
+<UL>
+<LI>RCS to cache all the revisions to an single file
+<LI>rcsvg to extract stable versions of each product from its own
+source cache under /usr/msrc/<I>dept</I>
+<LI>packages to group related products and documents into releases
+</UL>
+
+<P>
+In addition the build environment is reused from the older master source
+system to provide:
+<UL>
+<LI>platform indemendent builds
+<LI>multiple developers working in parallel
+<LI>a single source cache for any given product
+<LI>source reuse and sharing among departments
+</UL>
+
+<HR>
+<PRE>
+* * * End of Document * * *
+</PRE>
+</BODY>
+</HTML>

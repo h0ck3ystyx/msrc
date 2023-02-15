@@ -1,0 +1,59 @@
+<HTML>
+<TITLE>M4 culture</TITLE>
+<BODY>
+<H1>How to use m4 and still stay mostly sane</H1>
+The UNIX macro processor m4 has a really bad reputation.
+<EM>They</EM> say that m4 is cryptic and that you will grow
+hair on your palms for using it.
+They are wrong.
+
+<H2>M4 needs protection</H2>
+The first key to using m4 for success is that m4 requires you
+to quote text that should <EM>not</EM> be expanded.
+Words like "include",  "Unix", and "define" are m4 keywords
+and will be consumed by m4 without comment if used inappropriately.
+<P>
+To prevent this we must begin a m4'd file with an open quote (<CODE>`</CODE>)
+like this:<PRE>
+<CODE>	`# Makefile for the grumf product
+	# this program begins the cranking with a bandage...
+	#
+	...
+</CODE></PRE>
+
+And end the file with a m4 trick to suppress the extra newline:<PRE>
+<CODE>	...
+	foo.o: foo.c barg.h grumf.h
+	'dnl
+</CODE></PRE>
+
+<H2>The file needs expansion</H2>
+Now to expand a macro within the file we must drop quotes, do
+the expansion, and raise quotes once more.
+This ends up looking like:<PRE><CODE>
+	CDEFS= -D'HOSTTYPE`
+</CODE></PRE>
+
+The inverted quotes on HOSTTYPE allow the expansion of
+just that word without any danger to the surrounding text.
+
+<H2>Space, the final culture</H2>
+The clever use of the m4 <I>ifelse</I> construct at the end of a
+text line is the last trick we need to explore.
+To make the expanded text look proper we format the ifelse like this:<PRE><CODE>
+	${PROG}:$P ${OBJ}
+		${CC} -o $@ ${CFLAGS} ${OBJ}'ifelse(
+	HOSTTYPE,`SUN5',` -lgen',
+	HOSTTYPE,`IRIX5',` -lgen')`
+</CODE></PRE>
+
+<P>
+Note that take advantage of the m4 ifelse() function to
+eat the embedded newlines.
+This makes the comparison stick out at the beginning of each line.
+
+<HR>
+<A href="index.html#outline">Return to index.</A>
+
+</BODY>
+</HTML>

@@ -1,0 +1,20 @@
+# $Id: README,v 4.0 1996/02/27 21:48:18 kb207252 Exp $
+
+Run
+	$ distrib -V
+
+To get output like:
+	distrib: _Id: distrib.m,v 4.11 1996/02/27 20:35:02 kb207252 Exp _
+	distrib: using configuration from `distrib.cf'
+	distrib: default column headers: %HOST SHORTHOST HOSTTYPE HOSTOS HASSRC
+	distrib: compiled HOSTTYPE is HPUX9
+
+See "Distfile" to see how the @file@ feature works.
+
+See "printer.cf" for some other ideas (like tracking printers).
+
+See "remove-lines.m4" to see some m4 tricks for removing pesky text.
+
+--
+"Optimistic feeling can't be passed from hand to hand... they tend to die."
+kayessbee, Kevin Braunsdorf, ksb@fedex.com

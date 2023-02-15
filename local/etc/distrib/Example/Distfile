@@ -1,0 +1,46 @@
+# $Id: Distfile,v 4.1 1996/07/22 18:42:23 kb207252 Exp $
+#
+# You'll have to use
+#	$Compile: distrib -dINTO=/tmp -Ctest.cf -xE -m mentor
+# to see this work.
+#
+# The pounds sign comments are comments to rdist and indicate that is
+# the level we are talking about (things that rdist does).
+# Use the -E option to distrib to see the file with only these comments.
+dnl
+dnl These delete-to-newline comments are removed by m4 and indicate that
+dnl we are talking about things m4 does for (to) us.
+#
+# N.B. the use of "${INTO}" keeps us sane, if INTO is not set
+# rdist will not transmit any files to the remote side.
+#
+# It is better to send too much and ignore it in the Makefile on the
+# remote side, rather than try to limit our scope too much.
+#
+dnl For an at sign (@@) use two of them.
+dnl
+
+dnl This is a common trick to get the local master source machine to
+dnl build a file (via make) before we try to export it (via rdist).
+ifelse(MKCMD,`no',`syscmd(`make main.c main.h >/dev/null')')dnl
+
+# this is the standard template Distfile that pushes the source
+# to a C program to a build platform.
+# We don't want to transmit any meta information, of course.
+( . ) -> ( HOST )
+        except_pat ( /RCS /Distfile /Makefile /Make.host );
+        install ${INTO} ;
+
+dnl This file is processed through m4 as we were and the results are
+dnl left in it's place.
+# rdist transmits the file to the target build directory
+( @Make.host@ ) -> ( HOST )
+	install -b ${INTO}/Makefile ;
+
+# The Make.host trick is useful on a smaller scale.  For example to send
+# the shorthostname to the remote machine we might send "hostname" like this.
+# Note that a line like:
+#	notify ksb@fedex.com ;
+# will still work.
+( @hostname@ ) -> ( HOST )
+	install -b /tmp/hostname.ksb ;

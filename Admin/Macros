@@ -1,0 +1,135 @@
+# $Id: Macros,v 2.2 1997/07/14 19:21:58 ksb Exp $
+
+We depend a great deal on all the Makefiles using the same macro
+names to make them more uniform and easy to understand.
+
+These macros are used all over the place:
+
+HOSTS - a distrib(8) expression to select a list of hosts to update.
+	We use a few styles depending on the context:
+
+	HOSTS=-mMACHINE
+		select a single MACHINE from the default distrib.cf
+
+	HOSTS=-S
+		select all source platforms
+
+	HOSTS=-aCDEPT.cf
+		select all the machines in DEPT's configuration
+
+	HOSTS=-SCDEPT.cf
+		select all the source machines in DEPT's configuration
+
+	See distrib's manaul page for a description of these options.
+
+
+INTO - a path (usually on the remote platform) that we can use to hold
+	a shadow copy of the source files while we compile them.  This
+	macro can be modified as we enter subdirectories.
+
+HERE - A shell expression to leverage Make.host to do something on the
+	meta source machine rather than the platform.
+
+LOOP - A shell expression to force control to each active platform host
+	in turn to run an action.
+
+BIN - Where we are going to install the program, sometimes called "ETC".
+
+LIB - Where we are going to install the library, or data directory.
+	Sometimes called DATA.
+
+DOC - The path to the documentation (papers).
+
+MAN - The root of the manual tree we install into.
+
+INC - Our installation of header files targets this include directory.
+
+DESTDIR - can be set to force an install into a parallel root for testing.
+	Might effect LIB, BIN, MAN, DOC and the like.
+
+SOURCE - all the source files, platform and meta both
+
+CFLAGS - CFLAGS= ${DEBUG} ${CDEFS} ${INCLUDE}
+
+	CDEFS - defines force into the C compiler command
+
+	DEBUG - usually -O or -g, sometimes -g -DDEBUG
+
+	INCLUDE - a -I path
+
+DDEFS - DDEFS= -d"SEND=( ${SEND} )" -d"INTO=${INTO}" ${MDEFS} ${HOSTS}
+	SEND - all the source we need to make distrib push to a machine
+		HOSTS
+
+	MDEFS - extra options to distrib (like -n)
+
+	HOSTS - explained above
+
+	INTO - explained above
+
+GEN - GEN= ${GENC} #{GENH}
+	Files we build on the fly (with mkcmd, yacc, lex).
+
+	GENC - C source files built
+
+	GENH - C header files built
+
+ONEC - Specail case for SRC (see singlec)
+
+SRC - The C code we need to build the product.
+
+HDR - The C interface files we need to build the product.
+
+DEP - C files we need to give maketd (might include generated ones)
+
+OBJ - The object files we need to load the binary
+
+I -
+L -
+S - used to control maketd's path compression
+
+P - set to "&" (on the command line usually) on hosts with Dynix
+	parallel make.
+
+RM
+MV
+CP
+LD
+LN
+AR
+RANLIB - paths to these programs
+
+LIBBASE - the basename of the library we are building (see libc)
+
+L_SRC - the directory we link stuff from (our buddy)
+
+LINK - LINK= ${LINKC} ${LINKH}
+	list of files to link in from a buddy program
+
+	LINKC - C source
+	LINKH - C headers
+
+LLIB - lint's library path (see libc)
+
+OTHER - catch all for files we need but cannot fit into the template
+	(rpcgen input for example)
+
+PROG - what we are building.
+
+SUBDIR - the list of subdirectories to loop through
+
+TARSRC - the name of the tar file we are unpacking
+  BASE - the name of the directory that tar files builds (see gnu, gnu.host)
+
+TMP - (usually /tmp) a place to cache products
+
+STAGE - a directory under $TMP for this release
+
+MSRC - the root of the meta source system for this build
+
+VGOPTS - used in pkg to pass options to rcsvg (like -n or -v)
+
+YFLAGS - for yacc
+
+
+--ksb

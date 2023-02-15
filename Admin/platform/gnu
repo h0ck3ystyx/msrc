@@ -1,0 +1,55 @@
+# $Id: gnu,v 2.3 1997/10/26 14:59:20 ksb Exp $
+#
+#	platform Makefile for %% program name %%
+
+BASE=	%% tar of source code wget-1.4.2 %%
+TARSRC=	${BASE}%% .tar.gz or .tgz or .tar %%
+OTHER=	README %% other files in this directory %%
+SOURCE=	Makefile ${OTHER} ${TARSRC}
+
+all: ${BASE} FRC
+	cd ${BASE} && make $@
+
+${BASE}: ${TARSRC} FRC
+	zcat < ${TARSRC} | tar xf -	%% for gzipped files OR %%
+	tar xf ${TARSRC}		%% for non-compressed files %%
+	cd ${BASE} && ./configure --prefix=/usr/local
+
+clean: FRC
+	rm -rf ${BASE}
+
+deinstall: FRC
+	cd ${BASE} && make $@
+
+depend: FRC
+	cd ${BASE} && make $@
+
+dirs: FRC
+	cd ${BASE} && make $@
+
+distrib: FRC
+	cd ${BASE} && make $@
+
+install: all FRC
+	cd ${BASE} && make $@
+
+lint: FRC
+	cd ${BASE} && make $@
+
+mkcat: FRC
+	cd ${BASE} && make $@
+
+print: source FRC
+	cd ${BASE} && make $@
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+tags: FRC
+
+${SOURCE}:
+	co -q $@
+
+FRC:

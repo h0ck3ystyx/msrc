@@ -1,0 +1,86 @@
+# $Id: README,v 4.5 1997/10/25 19:23:54 ksb Exp $
+
+This directory is the heart of the meta source system for a local installation.
+From the _master_source_host_ we push files to /usr/src and /usr/src/Pkgs onto
+each _platform_host_ to compile for the host's host type.
+
+A table called "distrib.cf" controls the list of platform hosts as well as a
+side list of all the _peer_hosts_ that just get binary images from a platform
+host.  The manual page in this directory explains the format of the file.
+
+A hook file called "local.defs" is sourced (with the . command) into each
+remote shell command to install the approtiate $PATH, umask, and other
+environment as might be required to run make, cc, and the like.
+
+Some other files might be used for special purpose distributions and are
+installed as a bonus.  Keep in mind the model that distrib.cf points out
+to machines we send stuff to and local.defs intercepts incoming commands
+to filter them for the local environment.
+
+
+Getting started:
+----------------
+
+After you have distrib installed on the master machine (and maybe some others
+that are going to lead distribution to clusters of target devices) you are
+going to need a working rdist.  Get it from Michael Cooper, mcooper@usc.edu:
+
+	The current official version of rdist is available via anonymous
+	ftp on usc.edu under /pub/rdist.  The current version is always
+	retrievable as file "/pub/rdist/rdist.tar.gz".
+
+Install rdist on all the clients and servers.  Using the same version of
+rdist everywhere is a Big Win, but you can fix most problems with the
+advanced hack below (see RDISTD_PATH for example).
+
+Follow the "new-platform" document in the msrc Admin directory.
+
+Use distrib to make your life better by pushing out text files first (like
+/etc/motd might be nice to get started).  Then look into using the m4 levers
+to build more custom file (like /etc/fstab, or /etc/printcap).  If you have
+a burning desire you can build _all_ the files on a client from a level 0 dump
+and a Distfile [yeah, I did that].
+
+Use distrib to help you build products on various platforms.  Follow the
+stuff in the msrc package and look at how I did it.  See the papers in the
+msrc papers directory.
+
+You might have to export a SHELL environment variable for some broken make(1)
+implementations (they use _csh_ by default, ouch).
+
+I have had to build a private bin directory (/usr/local/lib/distrib/bin, what
+and aweful name) to put first in the exported PATH to hide some broken system
+utilities.  This is the last fallback before you buy a new machine.
+
+
+Advanced notes:
+---------------
+
+[After you have the basics working you'll need these.]
+
+Distrib has some advanced hooks that you might need:
+	If the distrib.cf file ends in .mcf rather than .cf it is run
+	through m4 with MYTYPE defined.  This allows for a primative lever
+	for machines that share /usr/local through NFS (or the like).
+
+	The macro RDIST_PATH (RDISTD_PATH) defines the (remote) path
+	to rdist (rdistd) that distrib should use for each machine.
+	These may have difference definitions for each target device,
+	or be left unset to default to the mkcmd found rdist (default
+	value hard coded in rdist).  (RDISTD_PATH is presented as a
+	-p argument to the named rdist.)
+
+	Use separate files for target populations -- don't try to use m4
+	ifelse logic to produce complex lists of host on the fly.  I've
+	also taken to using comm(1) style lists on using comm and sort -u
+	to provide input host lists.  You might want to get my xapply (*)
+	extended apply/xargs tool for more leverage here.
+
+	A file "clients.cf" for the NFS clients booted from a server is
+	more than a little nice.  Use it to make swap files and arp
+	tables and all that sticky stuff.
+
+--
+ksb, 24 Oct 1997 ksb@fedex.com
+
+(*) xapply(1) is in the Pkg "xapply-3.2" with some other nice tools.

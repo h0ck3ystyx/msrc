@@ -1,0 +1,58 @@
+`# $Id: gnu,v 2.5 2000/06/17 22:01:45 ksb Exp $
+#
+#	master Makefile for %% program name %%
+
+BASE=	%% tar of source code wget-1.4.2 %%
+TARSRC=	${BASE}%% .tar.gz or .tgz or .tar %%
+BUILD=	${BASE}%% (sub)directory we cd into to build product %%
+OTHER=	README %% other files in this directory %%
+SOURCE=	Makefile ${OTHER} ${TARSRC}
+
+all: ${BASE} FRC
+	cd ${BUILD} && ${MAKE} $@
+
+${BASE}: ${TARSRC} FRC
+	zcat < ${TARSRC} | tar xf -	%% for gzipped files OR %%
+	tar xf ${TARSRC}		%% for non-compressed files %%
+	cd ${BASE} && ./configure --prefix='ifdef(`DSPD_SUPPORT',
+`/opt/fedex/support',`/usr/local')`
+
+clean: FRC
+	rm -rf ${BASE}
+
+deinstall: FRC
+	cd ${BUILD} && ${MAKE} $@
+
+depend: FRC
+	cd ${BUILD} && ${MAKE} $@
+
+dirs: FRC
+	cd ${BUILD} && ${MAKE} $@
+
+distrib: FRC
+	cd ${BUILD} && ${MAKE} $@
+
+install: all FRC
+	cd ${BUILD} && ${MAKE} $@
+
+lint: FRC
+	cd ${BUILD} && ${MAKE} $@
+
+mkcat: FRC
+	cd ${BUILD} && ${MAKE} $@
+
+print: source FRC
+	cd ${BUILD} && ${MAKE} $@
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+tags: FRC
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+'dnl

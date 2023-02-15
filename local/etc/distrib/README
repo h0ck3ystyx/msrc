@@ -1,0 +1,66 @@
+# $Id: README,v 4.1 1996/03/02 17:03:57 kb207252 Exp $
+
+What does it do?
+
+ Distrib keeps track of an attributes database.  It runs a file (called
+ Distfile) though the m4 macro processor with these attributes defined
+ as macros to produce an rdist control file.  This new distfile may be
+ presented to rdist or diverted to stdout.
+
+ The "meta source organization" uses distrib to push source and make(1)
+ control files to remote machines.  These images from the master source
+ machine on various target machines produce products and config files.
+
+ For example we keep our source code for our local tools in /usr/msrc/local on
+ our master source machine.  In each products directory there is a Distfile
+ which tells distrib which platforms that product will compile and run on.
+
+ The command
+	distrib -S
+ will update the sources to a given product from the /usr/msrc tree to the
+ /usr/src tree on each target platform.  Then we simply compile and install
+ the product on each machine.
+
+ After a product is installed, the command
+	distrib -c /usr/local/bin/product HOST
+ will update that product (in /usr/local/bin) on all the hosts of the same
+ CPU/OS type.
+
+
+What platforms?
+
+ It runs under 4.2/4.3bsd, IBM's AIX6000, SunOS 4.X, and HPUX, NeXT1.0,
+ Dynix, IRIX, ... anywhere rdist and m4 run.
+
+
+What do I need to evaluate it?
+
+ If you have a (heterogeneous) network you can give it a spin.  You need rdist.
+
+
+Who would be interested in this kind of thing?
+
+ Anyone with more than one machine and a network.  Big sites with lots of
+ platforms and local tools might love it.  We do.
+
+
+Is this software restricted in distribution?
+
+ No.  It has a Purdue Research Copyright, but that is just so you won't
+ say you wrote it.
+
+
+How much trouble is it to port?
+
+ The code is ~2000 lines.  Not too hard to read in <1 hour.  It should work
+ with a little push on any machine rdist runs on.  It is std ksb code (good
+ or bad, you decide).
+
+ You need mkcmd-7.11 or so you really understand the distrib.m file.
+ A prefab main.[ch] pair are included for you if you do not have mkcmd.
+
+
+--
+01 March 1996
+... faces freedom with a little fear.  I have no fear, and I don't need love.
+kayessbee, Kevin Braunsdorf, ksb@fedex.com

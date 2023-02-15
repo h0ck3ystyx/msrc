@@ -1,0 +1,103 @@
+<HTML>
+<TITLE>The Meta Source Organization</TITLE>
+<BODY>
+<PRE>
+$Id: index.html,v 1.3 1997/07/15 00:07:44 ksb Exp $
+</PRE>
+
+<H1>The Problem Statement</H1>
+<P>
+This source organization is one way to solve the "common source"
+problem.
+<P>
+Once a product has been ported to multiple platforms there is a
+strong tendency to maintain the various ports under their separate
+platform environments.
+This compounds work relating to bug fixes and enhancement requests.
+A bug fixed under one platform may require more (or different) 
+code on any other one -- which might be more work than the author of
+the change is willing to undertake.
+<P>
+One might also argue that multiple source repositories (RCS or SCCS caches
+for example) get out of sync quickly and are hard to re-synchronize.
+Surely it would be better for the developer to have a single source
+control structure for every platform.
+<P>
+This document explains a source organization which enhances a
+developer's fine control while allowing the gross control to
+port to (and produce on) many system platforms.
+
+<H1>Expense</H1>
+<P>
+A commitment to following the <EM>cultural</EM> standards set forth in this
+document is the only expense required.
+It is the author's belief that the man-hours spent implementing
+this (re-)organization of a products source will quickly be recouped
+by the benefits gained.
+
+<P>
+Several <EM>implementation</EM> utilities are available via
+<A href="ftp://ftp.dspd.fedex.com/pub/msrc">FTP</A>.
+
+<H1><A name="outline">Outline</A></H1>
+
+<H2><A href="pre-req.html">Pre-requisite infrastructure</A></H2>
+<UL>
+<LI><A href="pre-req.html#revision">RCS</A>
+<LI><A href="pre-req.html#make">make</A>
+<LI><A href="pre-req.html#shell">sh</A>
+<LI><A href="pre-req.html#rdist">rdist</A>
+<LI><A href="pre-req.html#macro">m4</A>
+<LI><A href="pre-req.html#local">local.defs</A>
+</UL>
+
+<H2><A href="single.html">Single Platform Organization</A></H2>
+<UL>
+<LI><A href="single.html#makefile">Makefile</A>
+<LI><A href="single.html#machine_h">machine.h</A>
+<LI><A href="single.html#machine_c">machine.c</A>
+<LI><A href="single.html#file_c">C source -- declaration</A>
+<LI><A href="single.html#file_c">C source -- in-line code</A>
+<LI><A href="single.html#libs">libraries</A>
+<LI><A href="single.html#install">installation</A>
+<LI><A href="single.html#distrib">distribution</A>
+<LI><A href="single.html#mkcat">documentation</A>
+<LI>RCS
+</UL>
+
+<H2><A href="master.html">Master Organization</A></H2>
+<UL>
+<LI><A href="master.html#macro">Macro processed Makefile</A>
+<LI><A href="master.html#distrib">Distfile</A>
+<LI><A href="master.html#makefile">A new Makefile</A>
+<LI><A href="master.html#rcs">RCS</A>
+<LI><A href="master.html#levers">More leverage</A>
+</UL>
+
+<H2><A href="meta.html">Meta Organization</A></H2>
+<UL>
+<LI><A href="meta.html#rcsvg">Whole versions (or more) rcsvg</A>
+<LI><A href="meta.html#makefile">Changes to Makefile</A>
+<LI><A href="meta.html#tracking">Problem tracking</A>
+</UL>
+
+<H2><A href="nfs.html">NFS can help</A></H2>
+<UL>
+<LI><A href="nfs.html#msrc">Export /usr/msrc</A>
+<LI><A href="nfs.html#src">Export /usr/src</A>
+<LI><A href="nfs.html#bins">Export binary files or documentation</A>
+</UL>
+
+<H2><A href="tools.html">More Power</A></H2>
+<UL>
+<LI><A href="tools.html#mkremote">mkremote</A>
+<LI><A href="tools.html#servo">servo</A>
+<LI><A href="tools.html#levers">leverage we only touched</A>
+</UL>
+
+<H2><A href="summary.html">Summary</A></H2>
+
+<HR>
+<A href="pre-req.html">Next Page</A>
+</BODY>
+</HTML>

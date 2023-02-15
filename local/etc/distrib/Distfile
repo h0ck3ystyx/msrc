@@ -1,0 +1,13 @@
+# $Id: Distfile,v 4.0 1992/06/13 15:07:24 ksb Exp $
+#
+# If you try to run this without the Makefile to provide a -dINTO=...
+# you will get an undefined variable error from rdist	-- ksb
+#
+ifelse(MKCMD,`no',`syscmd(`make main.c main.h >/dev/null')')dnl
+. -> ( HOST )
+        except_pat ( /RCS /Distfile /Makefile /Make.host );
+        except Distfile ;
+        install ${INTO} ;
+
+( @Make.host@ ) -> ( HOST )
+	install -b ${INTO}/Makefile ;

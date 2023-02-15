@@ -1,0 +1,30 @@
+#!/bin/ksh
+# $Id: verof,v 1.2 1997/11/18 19:53:52 ksb Exp $
+# guess at the "ksb version" for this product.
+# ksb always uses the major revision number of the mkcmd template
+# or the Makefile as the key.  1.x -> One, 2.x -> Two and the like.
+#
+
+PROGNAME=`basename $0 .ksh`
+
+if [ ! -d RCS -o ! -f RCS/Makefile,v ] ; then
+	echo 1>&2 "$PROGNAME: `pwd`: not a source directory"
+	exit 1
+fi
+
+co -q -p Makefile | ident | sed -n -e 's/.*\$[R]evision: \(.*\)\$.*/\1/p' \
+	-e 's!.*\$[H]eader: .*,v \([0-9.]*\) \([0-9/]* [0-9:]*\) \([^ :]*\).*\$.*!\1!'p \
+	-e 's!.*\$[I]d: .*,v \([0-9.]*\) \([0-9/]* [0-9:]*\) \([^ :]*\).*\$.*!\1!'p |
+uniq | sed -e 's/^1\.[0-9.]*/One/' \
+	-e 's/^2\.[0-9.]*/Two/' -e 's/^3\.[0-9.]*/Three/' \
+	-e 's/^4\.[0-9.]*/Four/' -e 's/^5\.[0-9.]*/Five/' \
+	-e 's/^6\.[0-9.]*/Six/' -e 's/^7\.[0-9.]*/Seven/' \
+	-e 's/^8\.[0-9.]*/Eight/' -e 's/^9\.[0-9.]*/Nine/' \
+	-e 's/^10\.[0-9.]*/Ten/' -e 's/^11\.[0-9.]*/Eleven/' \
+	-e 's/^12\.[0-9.]*/Twelve/' -e 's/^13\.[0-9.]*/Thirteen/' \
+	-e 's/^14\.[0-9.]*/Fourteen/' -e 's/^15\.[0-9.]*/Fifteen/' \
+	-e 's/^16\.[0-9.]*/Sixteen/' -e 's/^17\.[0-9.]*/Seventeen/' \
+	-e 's/^18\.[0-9.]*/Eighteen/' -e 's/^19\.[0-9.]*/Nineteen/' \
+	-e 's/^20\.[0-9.]*/Twenty/' -e 's/^[0-9].*/Max/'
+
+exit 0

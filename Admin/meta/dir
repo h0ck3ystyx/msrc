@@ -1,0 +1,84 @@
+# $Id: dir,v 2.4 2000/06/17 22:03:21 ksb Exp $
+#
+#	directory makefile for a %% package name %%
+
+GEN=	%% files built here %%
+SUBDIR= %% BIN/PROD BIN/OTHER %%
+OTHER=	README Distfile Make.host %% files like Make.host %%
+SOURCE=	Makefile ${OTHER}
+
+INTO=%% /usr/src/Pkgs/PACKAGE %%
+HOSTS= -S
+MDEFS=	
+DDEFS=	-d"INTO=${INTO}" ${MDEFS} ${HOSTS}
+
+DEBUG=	-O
+DESTDIR=
+
+LOOP=	for i in `distrib -H ${HOSTS}` ; do \
+		echo $$i: ;\
+		rsh $$i -n sh -c '". /usr/local/lib/distrib/local.defs && cd ${INTO} && ${MAKE} DESTDIR=${DESTDIR} DEBUG=\"${DEBUG}\" $@"' ;\
+	done
+HERE=	distrib -E -f Make.host -m `hostname` | ${MAKE} -f - $@
+
+quit: FRC
+	echo 1>&2 "Use 'make all' to build this directory"
+
+all: rsource FRC
+	${LOOP}
+
+calls: msource FRC
+	${HERE}
+
+clean: FRC
+	${LOOP}
+	rm -f ${GEN} Makefile.bak a.out core errs lint.out tags
+
+deinstall: FRC
+	${LOOP}
+
+depend: FRC
+	${LOOP}
+
+dirs: FRC
+	${LOOP}
+
+distrib: FRC
+	${LOOP}
+
+install: rsource FRC
+	${LOOP}
+
+lint: FRC
+	${LOOP}
+
+mkcat: FRC
+	${LOOP}
+
+print: msource FRC
+	${HERE}
+
+source: rsource
+	${LOOP}
+
+rsource: Distfile msource ${GEN}
+	distrib -o nodescend ${DDEFS}
+	for i in ${SUBDIR} ; do \
+		echo $$i: ;\
+		( cd $$i; [ -f Makefile ] || co -q Makefile;\
+		${MAKE} INTO="${INTO}/$$i" DESTDIR="${DESTDIR}" DEBUG="${DEBUG}" HOSTS="${HOSTS}" rsource ;)\
+	done
+
+msource: ${SOURCE}
+
+spotless: clean FRC
+	rcsclean ${SOURCE}
+	${LOOP}
+
+tags: msource FRC
+	${HERE}
+
+${SOURCE}:
+	co -q $@
+
+FRC:

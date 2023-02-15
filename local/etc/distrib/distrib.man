@@ -1,0 +1,362 @@
+.\"  $Id: distrib.man,v 4.6 1999/06/20 10:08:55 ksb Exp $
+.TH DISTRIB 8L PUCC
+.SH NAME
+distrib \- distribute files to remote hosts
+.SH SYNOPSIS
+\fIdistrib\fP \-\fBc\fP \-\fBE\fP [\-\fBI\fP | \-\fBa\fP | \-\fBm\fP \fImachine\fP | \-\fBt\fP \fItype\fP] [\-\fBS\fP] [\-\fBF\fP\fBM\fP\fBR\fP\fBb\fP\fBn\fP\fBq\fP\fBv\fP\fBx\fP\fBy\fP] [\-\fBC\fP \fIconfigfile\fP] [\-\fBD\fP \fIvar=value\fP] [\-\fBd\fP \fIvar=value\fP] [\-\fBG\fP \fIguard\fP] [\-\fBs\fP \fIcmd\fP] [\fIhosts\fP]
+.br
+\fIdistrib\fP \-\fBc\fP [\-\fBI\fP | \-\fBa\fP | \-\fBm\fP \fImachine\fP | \-\fBt\fP \fItype\fP] [\-\fBS\fP] [\-\fBH\fP\fBM\fP\fBR\fP\fBb\fP\fBn\fP\fBq\fP\fBv\fP\fBx\fP\fBy\fP] [\-\fBC\fP \fIconfigfile\fP] [\-\fBD\fP \fIvar=value\fP] [\-\fBd\fP \fIvar=value\fP] [\-\fBG\fP \fIguard\fP] [\-\fBs\fP \fIcmd\fP] [\fIhosts\fP]
+.br
+\fIdistrib\fP \-\fBE\fP [\-\fBI\fP | \-\fBa\fP | \-\fBm\fP \fImachine\fP | \-\fBt\fP \fItype\fP] [\-\fBS\fP] [\-\fBf\fP \fIdistfile\fP] [\-\fBF\fP\fBM\fP\fBR\fP\fBb\fP\fBn\fP\fBq\fP\fBv\fP\fBx\fP\fBy\fP] [\-\fBC\fP \fIconfigfile\fP] [\-\fBD\fP \fIvar=value\fP] [\-\fBd\fP \fIvar=value\fP] [\-\fBG\fP \fIguard\fP] [\fIhosts\fP]
+.br
+\fIdistrib\fP [\-\fBI\fP | \-\fBa\fP | \-\fBm\fP \fImachine\fP | \-\fBt\fP \fItype\fP] [\-\fBS\fP] [\-\fBf\fP \fIdistfile\fP] [\-\fBH\fP\fBM\fP\fBR\fP\fBb\fP\fBn\fP\fBq\fP\fBv\fP\fBx\fP\fBy\fP] [\-\fBC\fP \fIconfigfile\fP] [\-\fBD\fP \fIvar=value\fP] [\-\fBd\fP \fIvar=value\fP] [\-\fBG\fP \fIguard\fP] [\fIhosts\fP]
+.br
+\fIdistrib\fP \-\fBV\fP
+.br
+\fIdistrib\fP \-\fBh\fP
+.br
+.SH DESCRIPTION
+.I Distrib
+is a front end for
+.IR rdist (1).
+.I Distrib
+reads a configuration file that contains a list of host names and
+host types then runs \fIrdist\fP for a subset of those hosts.
+Host
+.I types
+are specified in a configuration file, and are used to group
+machines of similar characteristics (such as CPU type) together.
+By default,
+.I distrib
+updates all hosts with the same
+.I type
+as the current host.
+.PP
+For each host
+.I distrib
+updates it runs
+.IR m4 (1)
+over a distfile with the following macros (possibly) predefined:
+.RS
+.TP
+.B HOST
+Column one is the name of the host that is being updated.
+.TP
+.B SHORTHOST
+Column two is the abbreviated host name of the host that is being updated.
+This is generally used in \fIm4\fP \fBifelse\fP() calls to compare
+hostnames (when required).
+.TP
+.B HOSTTYPE
+Column three is the
+.I type
+of host that is being updated.
+.TP
+.BR HOSTOS
+Column four is the numeric revision of the operating system on this
+host.  It is only numeric by (local) convention.
+.TP
+.B HASSRC
+If this host has a /usr/src directory put something other than a dot (`.')
+in the fifth column of the configuration file.
+Such machines are the `platforms' that products are compiled on and send
+from.
+.TP
+.B MYTYPE
+The
+.I type
+of the host that is running 
+.I distrib
+is provided for comparison.
+.TP
+.B MYOS
+The
+.I os
+of the host that is running
+.I distrib
+is provided for comparison.
+.RE
+.sp
+If any of these columns contain a period (.) the macro is left undefined
+(or in the case of MYTYPE (MYOS) if the local machine is not
+in \fIconfigfile\fP).
+.PP
+The configuration file may also contain comments given by starting a
+line with the pounds (#) character.
+Blank lines are ignored.
+.PP
+The current host should be in the configuration file so that
+.I distrib
+can find the default type of host to update.
+However, by default
+.I distrib
+does
+.B not
+attempt to update the local host,
+even though it appears in the configuration file.
+.PP
+The default \fIdistfile\fP is ``\fIDistfile\fP'' in the current
+working directory.
+If that cannot be found, \fIdistrib\fP uses ``\fIdistfile\fP'' (see \-\fBf\fP).
+.PP
+If a source filename in the processed \fIdistfile\fP is surrounded by
+commercial at signs (@)
+that file is processed by \fIm4\fP with the same macros defined
+as were defined for the \fIdistfile\fP.
+The resulting file is cached under a directory in /tmp,
+such a file has the same modes as the source file.
+The name of the cached file is substituted in place of
+the \fB@\fP\fIfilename\fP\fB@\fP sequence in
+the distfile sent to \fIrdist\fP.
+.SH OPTIONS
+.I Distrib
+recognizes the following command line options (only one of
+.BR \-a ,
+.BR \-I ,
+.BR \-m ,
+or
+.B \-t
+may be given, and
+.B \-c
+and
+.B \-f
+are mutually exclusive):
+.TP
+.B \-a
+Update all of the hosts in the configuration file.
+.TP
+.B \-c
+Use a command line distfile, very much like \fIrdist\fP's \-c option.
+The command line distfile is still run through m4 for macro expansion.
+If only one parameter is provided the destination machine is assumed to
+be ``HOST''.
+.TP
+.BI \-C configfile
+Use
+.I configfile
+instead of the default configuration file.  If \fIconfigfile\fP
+cannot be found, and \fIconfigfile\fP is not an absolute path,
+then \fIdistrib\fP will search for \fIconfigfile\fP in the directory
+/usr/local/lib.
+If the
+.IR configfile 's
+name ends in ``.mcf'' then it is run though \fIm4\fP
+with the hard compiled HOSTTYPE defined as "MYTYPE" and
+any \-\fBD\fP options presented on the command line.
+.TP
+\fB\-D\fP \fIvar\fP=\fIvalue\f
+The \fIvar\fP is defined as \fIvalue\fP for \fIm4\fP during macro expansion.
+If no \fIvalue\fP is given the empty string is used.
+.TP
+.BI \-E
+As in \fIcpp\fP(1) just expand the \fIdistfile\fP to stdout.
+.TP
+.BI \-F
+Force @file@ replacement in \fIdistfile\fP, under \fB\-E\fP, even if
+the given file doesn\'t have the proper name.
+.TP
+.BI \-f distfile
+An alternate \fIdistfile\fP may be given with this option.
+A dash (\-) is taken as stdin.
+.TP
+.BI \-G guard
+The m4 expression \fIguard\fP is evaluated (with the common macros
+defined) to decide if each host should be included in the target list.
+Only when the expression produces a non-empty string containing 
+any character other than white-space or the digit zero (0) is the host
+included in the list.  This is intersected with the other host
+limitting options.
+.TP
+.BI \-H
+Provide a list of the hosts to update (only) on stdout.  This
+is shorthand for:
+.sp 1
+	echo HOST | distrib \-f \- \-E ....
+.sp 1
+and saves many processes.  The \fB\-E\fP option is forbidden,
+since it is implied, any \fB\-f\fP option is ignored.
+.TP
+.BI \-h
+Provide a help message.
+.TP
+.BI \-I
+Include myself.  The local machine will be included in the
+default update.
+.TP
+.BI \-m machine
+Update only a single machine from those listed in the configuration file.
+This option is most useful after a machine has been off-line for a while
+to `catch up' on recent system upgrades.
+.TP
+.BI \-s cmd
+Insert a special command in the tiny distfile generated under \-\fBc\fP.
+Other commands like \fBexcept_pat\fP are not accessible from the command
+line \-\- this might be a bug.
+.TP
+.B \-S
+Update only machines that have a HASSRC macro defined.
+Use a ``.'' (dot) in the fifth column of a machine's
+description to force this option to skip that machine
+(any other string may have a meaning at the local site).
+This option will work as an ``and''
+with \fB\-m\fP or \fB\-t\fP (below).
+.TP
+.BI \-t type
+Update hosts only of the given \fItype\fP.
+The \fItype\fP given may be a comma separated list of types.
+In this case \fIdistrib\fP will update only the hosts of each listed type.
+.TP
+.B \-V
+Output version information about \fIdistrib\fP.
+This includes the default column headers and hard coded platform
+type for this platform.
+.TP
+.B \-x
+Be more verbose with the output of approximate shell commands.
+.PP
+The following options are passed to
+.IR rdist ;
+see the
+.IR rdist (1)
+man page for a detailed description of their purpose:
+.TP
+.B \-b
+perform binary comparisons to see if files differ
+.TP
+\fB\-d\fP \fIvar\fP=\fIvalue\f
+Pass the given command line definition on to \fIrdist\fP.
+.TP
+.B \-M
+use modes, groups and ownerships as criteria for deciding if a file or
+directory is out of date
+.TP
+.B \-n
+print commands without actually executing them
+.TP
+.B \-q
+quiet mode
+.TP
+.B \-R
+remove extraneous files
+.TP
+.B \-n
+Do not really execute \fIrdist\fP.
+.TP
+.B \-v
+verify that files are up to date on the remote hosts
+.TP
+.B \-y
+only update files that are younger than the master copy
+.SH EXAMPLES
+.TP
+distrib nostromo staff pop.stat element
+Send the files given in the local \fIdistfile\fP to the listed machines.
+.TP
+distrib \-c /bin/ls HOST
+Send the binary for \fIls\fP to all hosts like this one.
+.TP
+distrib \-ac /etc/motd HOST
+Send the message of the day to all hosts.
+.TP
+distrib -tSUN5 -G "eval(HOSTOS > 20501)" ...
+Use a guard to limit distribution to hosts better than Solaris 2.5.1.
+(Local convention is to use 2 digits for each portion of a dotted number.)
+.TP
+distrib \-Sc /usr/src/local/etc/distrib HOST
+Send the source for distrib to all the source machines.
+.TP
+distrib \-E lv426
+Examine the distfile that would be used to update \fIlv426\fP.
+.\" Due to a bug in the .TP macro we can't use it with an @ in the top-line
+.\"  so we make it look OK with raw nroff TNX to slt@softart.com
+.PP
+distrib \-ac @hostname@ HOST:/tmp/hostname
+.in +5
+Run \fIm4\fP on the file \fIhostname\fP for each host in the configfile,
+install it as \fI/tmp/hostname\fP on that host.
+The file \fIhostname\fP might contain something like
+.sp 1
+.RS
+	dnl  This is our local name after m4
+.br
+	HOST
+.RE
+.in -5
+.PP
+Here is a simple example configuration file:
+.RS 5
+.nf
+#
+# Sample Configuration File
+#
+.TS
+l l l l l.
+# Official	Short	CPU	OS	Has
+# Hostname	Hostname	Type	Type	/usr/src
+j.cc.purdue.edu	J	VAX780	403	yes
+i.cc.purdue.edu	I	VAX780	403	.
+mentor.cc.purdue.edu	MENTOR	S81	30012	yes
+sage.cc.purdue.edu	SAGE	S81	30012	.
+orphan.cc.purdue.edu	ORPHAN	.	.	kinda
+.TE
+.fi
+.RE
+.PP
+Given those hosts and this Distfile:
+.RS 5
+.nf
+#
+# Sample Distfile
+#
+( . ) -> ( HOST )
+	except_pat ( /RCS /Makefile /Distfile ifelse(HOSTTYPE, `S81', `/vax-main.c') );
+	install ${INTO} ;
+
+( @Make.host@ ) -> ( HOST )
+	install -b ${INTO}/Makefile ;
+.fi
+.RE
+\fIDistrib\fP would send the current directory to ${INTO}, except for
+``/vax-main.c'' which would not be sent to mentor, or sage.
+The file ``Make.host'' will be filtered through \fIm4\fP before being
+sent as the remote file ``Makefile''.
+.SH FILES
+.TS
+l l.
+/usr/local/lib/distrib/distrib.cf	default configuration file
+/usr/local/lib/distrib/clients.cf	usually a configuration for local clients
+/usr/local/lib/distrib.defs	macro include file (antiquated)
+Distfile	default distfile
+distfile	alternate default distfile
+/tmp/fdist$$	directory for cache of \fIm4\fP processed files
+.TE
+.SH BUGS
+.PP
+The use of \fIm4\fP(1) shows questionable judgement.
+.PP
+Distrib is now dependant upon the new version of rdist.
+.PP
+The multiple uses of the HASSRC macro are unclear to the novice user.
+.PP
+\fIRdist\fP has a problem if the \fImachine\fP given for the \-\fBm\fP
+option doesn't string compare exactly with the destination host (it
+doesn't send any files).
+\fIDistrib\fP replaces the \fImachine\fP given on the command line
+with the value of HOST for that machine in the hopes that the \fIdistfile\fP
+will use the HOST macro as the target machine, not SHORTHOST.
+.PP
+Under EPIX \fIhostname\fP(1) returns only the first part of the full
+domain name for the host.  \fIDistrib\fP trys to make rdist do the
+correct thing anyway (with little success).  To make -m's to the current
+host work, on such machines the HOST macro is the same string as the
+SHORTHOST macro (for the local machine only) {what a kludge}.
+.PP
+The \-\fBs\fP hack under \-\fBc\fP is very convenient, but
+a more general interface (like \-\fBo\fP) might be better.
+.SH AUTHORS
+Kevin S. Braunsdorf   Purdue University Computing Center  ksb@cc.purdue.edu
+.br
+Michael J. Spitzer  Purdue University Computing Center  mjs@sequent.com
+.br
+.SH SEE ALSO
+cpp(1), m4(1), rdist(1), sh(1)

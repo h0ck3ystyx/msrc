@@ -1,0 +1,61 @@
+# $Id: Levers,v 2.3 1997/10/25 20:54:54 ksb Exp $
+
+This is the administrative directory for meta source stuff.
+
+We keep the papers and templates and stuff here.  We should have a
+"docs" directory under local and keep all the stuff there, but this
+applies more widely than just "local" I guess.
+
+The meta source system is based on ten point leverage.  This is a rough
+outline to get you started.
+
+Points:
+
+0\ A Genesis script binds packages into a system.
+
+1\ The level 3 packaging makefile (Makefile) lists the products bound into
+   a release.
+
+2\ The level 2 package build makefile (Make.meta, or Makefile) might send
+   a MDEFS to each project to change its behavior.  It also lists the order
+   that the products must be built.
+
+3\ The level 1 makefile (Make.host, becomes Makefile) has -D'HOSTTYPE` in
+   it to clue machine.h to the apropos default values for HAVE_x macros.
+
+   The Make.host file might force a -DHAVE_x or -DNEED_x macros based
+   on HOSTTYPE or other values in distrib.cf.
+
+   The Make.host file might include library options, or add/replace
+   source files using m4 logic.
+
+4\ The machine.h file sets default property macros.  This is the ONLY
+   place where the host type or operating system version is examined.
+   By converting the host type into a set of property macros we may
+   abstract more code into common code.
+
+5\ Below #include "machine.h" in a C source file we might conditionally
+   include a header file (<strings.h> or <string.h>, or <select.h>).  These
+   are often conditional on a property macro.
+
+6\ Next some external declarations for any emulation code might be #if'd
+   based on HAVE_x, NEED_x, DEF_x, or USE_x.
+
+7\ Next a section of optional data declarations (struct fsent FSNew;)
+   might be #if'd.  These might be declared as a macro type to unify
+   the code even more.
+
+8\ At the actual usage of the facility we call through a macro or
+   through some #if to unify the code as much as can be.
+
+9\ In another file (machine.c) any product specific emulation code is
+   installed.
+
+10\ We might pull generic emulation code from explode's repository with
+   a trigger from the Make.host m4 logic.
+
+   Also at this point mkcmd does path searches for executables we need to
+   get us back to the shell level.
+
+--
+ksb, Mar 1997

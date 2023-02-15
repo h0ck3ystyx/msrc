@@ -1,0 +1,42 @@
+# $Id: TODO,v 4.5 1999/06/20 10:40:59 ksb Exp $
+
+[In a flurry of creative energy!]
+
+Ben Jackson and I think that distrib could use a few more features.
+Can you believe these?
+
+1\ let -C take a comma separated list of configuration files
+
+2\ Think about multi-line info like
+	&M1 M2 M3 \
+		M4 M5
+
+   to implement a kinda stanza file.
+
+   Issues:
+	- Lines in an input stanza with `=' in them might indicate a conflict.
+	  How would we resolve all the cases?
+
+3\ expand the @file@ notation to allow other processors (viz. igor or cpp
+   or zcat/gzcat) to process files.
+
+	like
+	define(`PROCESSOR', ifelse(..., ..., `zcat', `gzcat'))dnl
+	( @<PROCESSOR>file.Z file1.gz@ ) -> 
+
+   Issues:
+	- this requires explicts ``install'' options unless we know about
+	  stripping extenders.
+
+	- barriers to other processors (the format for defines doesn't have
+	  to be the same).
+
+
+4\ Distrib could m4 define the name of the config file it is reading
+   and the name of the distfile it is reading (or undef it for stdin?).
+   This would give the Distfile leverage to include stuff based on the
+   machine population -- or not because the file *name* might be through
+   a symbolic link or stdin.  Maybe not so useful.
+
+--
+Kevin S Braunsdorf, ksb@fedex.com, Mar 1996 & Jun 1999

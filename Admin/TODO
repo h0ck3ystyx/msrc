@@ -1,0 +1,10 @@
+A target in the meta Makefile to restore the Pkg to /usr/msrc, or
+a shell script to do the same (unpkg?).  Move the sub products back
+into /usr/msrc/local/product.  For example something like:
+	$ cd /tmp
+	<unpack install-9.2>
+	$ cd install-9.2/
+	$ unpkg /usr/msrc/local
+
+--
+ksb

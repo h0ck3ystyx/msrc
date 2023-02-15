@@ -1,0 +1,66 @@
+`# $Id: script,v 2.2 1997/10/26 14:56:36 ksb Exp $
+#
+#	master Makefile for %% program name %%
+
+PROG=	%% program name %%
+BIN=	${DESTDIR}/%% bin directory might change to ETC %%
+LIB=	${DESTDIR}/%% lib directory if needed %%
+DOC=	${DESTDIR}/usr/local/man
+
+SRCl=	%% library files %%
+SRCs=	%% one script %%
+MAN=	%% the manual page for this tool %%
+OTHER=	README %% other files in this directory %%
+SOURCE=	Makefile ${OTHER} ${MAN} ${SRCl} ${SRCs}
+
+all: ${SRCl} ${PROG}
+
+${PROG}: ${SRCs}
+	sed -e "/^#\$$/d" -e "/^#[^!]/d" ${SRCs} > $@
+	chmod 755 $@
+
+clean: FRC
+	rm -f Makefile.bak ${PROG} a.out core errs lint.out tags
+
+deinstall: ${MAN} ${DOC} FRC
+	install -R ${BIN}/${PROG}
+	for dink in ${SRCl} ;\%% delete 4 lines if no SRCls %%
+	do \
+		install -Rm 644 ${LIB}/$$dink ;\
+	done
+	mkcat -r${DOC} -D ${MAN}
+
+depend: FRC
+
+dirs: ${BIN} ${LIB}
+
+distrib: FRC
+	distrib -c ${BIN}/${PROG} ${LIB} HOST	%% might be wrong ? %%
+
+install: all dirs FRC
+	install -cm 644 ${SRCl} ${LIB}%% delete if no SRCls %%
+	install -c ${PROG} ${BIN}/${PROG}
+
+lint: FRC
+
+mkcat: ${MAN} ${DOC} FRC
+	mkcat -r${DOC} ${MAN}
+
+print: source FRC
+	lpr -J"${PROG} source" ${SOURCE}
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+tags: FRC
+
+${BIN} ${LIB}:
+	install -dr $@
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+'dnl

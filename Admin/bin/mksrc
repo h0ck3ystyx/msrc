@@ -1,0 +1,87 @@
+#!/bin/ksh
+Id='$Id: mksrc,v 2.2 1997/10/26 17:53:37 ksb Exp $'
+# Prototype to make a platfor source dir from an _empty_ directory
+# Run this, then copy in the source and finish the configuration.	(ksb)
+#
+
+PROGNAME=`basename $0 .ksh`
+P=/usr/msrc/Admin/platform
+
+if [ ! -d "$P" ] ; then
+	echo "$PROGNAME: no template directory found here" 1>&2
+	echo "$PROGNAME: (looked in $P)" 1>&2
+	exit 2
+fi
+
+case _"$1" in
+_-h|_--help)
+	cat <<!
+$PROGNAME: usage [type]
+$PROGNAME: usage -h
+$PROGNAME: usage -V
+type  the type of the Makefile to install
+h     provide this help message
+V     ouptut version information
+!
+	exit 0 ;;
+_-V|_--version)
+	cat <<!
+$PROGNAME: $Id
+$PROGNAME: templates from $P
+!
+	cd $P && ( echo "Pick type from:" ; ls [a-z]* )
+	exit 0 ;;
+esac
+
+count=`/bin/ls -1 . | grep -v RCS | wc -l`
+
+if [ "$count" -gt 0 ] ; then
+	echo "$PROGNAME: directory should be empty to start"
+	exit 3
+fi
+
+cp $P/${1-gnu} ./Makefile
+chmod +w ./Makefile
+if [ _"${1:-gnu}" = _"pkg" ] ; then
+	cp $P/toplevel ./Make.meta
+	chmod +w Make.meta
+fi
+
+
+# this is Quite Clever, make the directory and copy the modes to
+# the RCS directory from . -- ksb
+[ -d RCS ] || {
+	mkdir RCS
+	echo "." | cpio -pdm RCS 2>&1 | grep -v blocks
+}
+
+sed -e 's/ZIdZ/Id/' >README <<!
+# \$ZIdZ\$
+
+%% put in your comments here %%
+--
+${USER-${LOGNAME-`whoami`}}
+!
+
+echo "explain the need" | rcs -i -q README
+if [ -f ./Make.meta ] ; then
+	echo "assemble package" | rcs -i -q Makefile
+	echo "compile source on platform" | rcs -i -q Make.meta
+else
+	echo "compile source on platform" | rcs -i -q Makefile
+fi
+
+vi +'/%%' README Makefile `ls Make.meta 2>/dev/null`
+
+for vic in README Makefile `ls Make.meta 2>/dev/null`
+do
+	if grep -s "%%.*%%" $vic ; then
+		echo "$vic not fully configured, re-edit and ci"
+	else
+		ci -u -q $vic
+	fi
+done
+
+/bin/ls -las .
+
+exit 0

@@ -1,0 +1,12 @@
+# $Id: Distfile,v 4.3 1997/09/01 15:14:10 ksb Exp $
+#
+`( . ) -> ( 'HOST` )
+	except_pat ( /RCS /Makefile /Distfile /Make\\.host /.*\\.cf\$ );
+	install ${INTO} ;
+
+( 'ifdef(`DSPD_SUPPORT',`null.cf',`distrib.cf')` ) -> ( 'HOST` )
+	install -b ${INTO}/distrib.cf ;
+
+( @Make.host@ ) -> ( 'HOST` )
+	install -b ${INTO}/Makefile ;
+'dnl

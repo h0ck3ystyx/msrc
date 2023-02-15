@@ -1,0 +1,174 @@
+#!/bin/ksh
+# $Id: rsrc,v 1.8 2000/07/30 21:39:06 ksb Exp $
+#
+# Use "makeme" to get mkcmd {lib, bin} explode {lib bin} and
+# install.d {bin} booted.  The install distrib {etc, lib} and
+# build a distrib.cf for the local platform.  Then use this to
+# pull the rest from a local rsync repository.
+#
+# This is like "makeme" but much more clever.
+# We emulate being the platform side of the master source system;
+# that is to say this host _pulls_ the master source down from a
+# network available host (local or Internet) and builds the product
+# in the local work area.
+PROGNAME=`basename $0 .ksh`
+#
+# This requires a control file to map the local heirarchy to the
+# remote one (and to find the remote one) it also gives you a
+# little more flexibility (you don't have to be root any place).
+#
+# The name of the local control file, in this or a parent directory:
+: ${RSRC_CONTROL:=".rsrc"}
+
+# Find the control file to get local prefs before we set defaults.
+# And read ~/.rsrc for grins.
+HERE=`pwd`/
+WE_READ=""
+if [ -f $HOME/$RSRC_CONTROL ] ; then
+	WE_READ="$WE_READ $HOME/$RSRC_CONTROL"
+	. $HOME/$RSRC_CONTROL
+fi
+while [ _"//" != _"$HERE" ] ; do
+	if [ -f $HERE/$RSRC_CONTROL ] ; then
+		WE_READ="$WE_READ $HERE/$RSRC_CONTROL"
+		. $HERE/$RSRC_CONTROL
+		break
+	fi
+	HERE=${HERE%/*/}/
+done
+
+# Now set defaults for anything she didn't say...
+
+#
+# The shell hook the master source should run on this host:
+: ${RSRC_LOCAL_DEFS:="/usr/local/lib/distrib/local.defs"}
+#
+# The root of the platform source tree here {try "/tmp/" or $HOME/src/},
+# this should be a prefix on $PWD when you run the program.  We typically
+# include the trailing slash on the end to make the URL look right:
+: ${RSRC_ROOT:="/usr/src/"}
+#
+# The master souce transport URL:
+: ${RSRC_MSRC:="rsync://msrc.sac.fedex.com/msrc"}
+#
+# We need to know our HOSTTYPE, so we need either:
+# 1) A distrib file with this  host listed in it for HOSTTYPE and such
+# {build "$HOME/.myself.cf" or so for non-root}.
+: ${RSRC_LIST:="/usr/local/lib/distrib/distrib.cf"}
+# or
+# 2) To use "makeme" to emulate distrib
+: ${SRC_MAKEME:=true}
+#
+# Transport preferences
+: ${VIA_RSYNC:="rsync --exclude=$RSRC_CONTROL -r"}
+: ${VIA_FTP:="wget -r -q"}
+: ${VIA_HTTP:="wget -r -q"}
+: ${VIA_WGET:="wget -r"}
+
+case "$RSRC_MSRC" in
+[Ff][Tt][Pp]:*)
+	: ${RSRC_VIA:=$VIA_FTP}
+	: ${RSRC_DIR:=""}
+	: ${RSRC_FILE:=""}
+	: ${RSRC_TAIL:=""} ;;
+[Hh][Tt][Tt][Pp]:*)
+	: ${RSRC_VIA:=$VIA_HTTP}
+	: ${RSRC_DIR:=""}
+	: ${RSRC_FILE:=""}
+	: ${RSRC_TAIL:=""} ;;
+[Rr][Ss][Yy][Nn][Cc]:*)
+	: ${RSRC_VIA:=$VIA_RSYNC}
+	: ${RSRC_DIR:=" ."}
+	: ${RSRC_FILE:=""}
+	: ${RSRC_TAIL:="/ ."} ;;
+*)
+	echo 1>&2 "$PROGNAME: unknown transport, using wget"
+	: ${RSRC_VIA=$VIA_WGET}
+	: ${RSRC_DIR:=""}
+	: ${RSRC_TAIL:=""} ;;
+esac
+
+# Find the master source side from the local context:
+MSRC_PATH=${PWD#$RSRC_ROOT}
+if [ _$PWD/ = _$RSRC_ROOT -o _$PWD = _$RSRC_ROOT ] ; then
+	MSRC_URL=$RSRC_MSRC
+elif [ _$MSRC_PATH = _$PWD -a _$PWD/ != _$RSRC_ROOT ] ; then
+	echo 2>&1 "$PROGNAME: $PWD is not a source directory under $RSRC_ROOT"
+	echo 2>&1 "$PROGNAME: using the remote root $MSRC_PATH"
+	MSRC_URL=$MSRC_PATH
+else
+	MSRC_URL=$RSRC_MSRC/$MSRC_PATH
+fi
+
+# Set RSRC_DISTRIBS to "false" to use "makeme", "true" to use
+# distrib with the local hostname (to find our hosttype).
+if [ -z "`whence distrib 2>/dev/null`" ] ; then
+	: ${RSRC_DISTRIBS:=false}
+fi
+
+case ${1-all} in
+-[Hh][Ee][Ll][Pp])
+	echo "$PROGNAME: usage [help|target|version]"
+	echo "-get dirs   just copy this subdirectory from the master"
+	echo "-help       display this help message"
+	echo "-pull file  download a single file from the source" 
+	echo "-version    explain local configuration we saw"
+	echo "target      emulate the master source system via a pull"
+	exit 0 ;;
+-[Vv][Ee][Rr][Ss][Ii][Oo][Nn])
+	echo $PROGNAME:' $Id: rsrc,v 1.8 2000/07/30 21:39:06 ksb Exp $'
+	cat <<!
+Control file basename: $RSRC_CONTROL
+Read control files: $WE_READ
+
+Local directory $RSRC_ROOT, with
+shell preferences from $RSRC_LOCAL_DEFS
+This host `hostname` should be listed in
+$RSRC_LIST:
+`distrib -E -C $RSRC_LIST -m\`hostname\` -f - 2>&1 <<TaG|sed -e "s/HASSRC/./"
+HOST SHORTHOST HOSTTYPE HOSTOS HASSRC
+TaG
+`
+
+Remote master source pool is: $RSRC_MSRC
+Copied with: $RSRC_VIA \$URL$RSRC_TAIL
+
+This directory: $PWD
+is made from the URL: $MSRC_URL
+!
+	exit 0 ;;
+-[Gg][Ee][Tt])
+	shift
+	# do we need this to find rsync/wget?
+	. ${RSRC_LOCAL_DEFS-"/usr/local/lib/distrib/local.defs"}
+	for RTARGET
+	do
+		$RSRC_VIA $MSRC_URL/$RTARGET$RSRC_DIR
+	done
+	exit 0 ;;	
+-[Pp][Uu][Ll][Ll])
+	shift
+	# do we need this to find rsync/wget?
+	. ${RSRC_LOCAL_DEFS-"/usr/local/lib/distrib/local.defs"}
+	for RFILE
+	do
+		$RSRC_VIA $MSRC_URL/$RFILE ${RFILE}
+	done
+	exit 0 ;;	
+*)
+	;;
+esac
+
+# Get the remote souce to the local directory
+. ${RSRC_LOCAL_DEFS-"/usr/local/lib/distrib/local.defs"}
+$RSRC_VIA $MSRC_URL$RSRC_TAIL
+
+if [ ! -f Make.host ] ; then
+	echo 1>&2 "$0: didn't find a Make.host file"
+	exit 221
+fi
+
+if ${RSRC_DISTRIBS:-true} ; then
+	exec distrib -E -f Make.host -m`hostname` |${MAKE-make} -f - ${1:+"$@"}
+fi
+exec makeme ${1:+"$@"}

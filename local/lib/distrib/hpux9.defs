@@ -1,0 +1,4 @@
+# local for HPUX9 at FedEx
+umask 022
+PATH=/usr/local/bin:/usr/local/etc:$PATH:/opt/fedex/support/bin:/opt/fedex/support/etc
+export PATH

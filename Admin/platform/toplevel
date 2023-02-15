@@ -1,0 +1,66 @@
+# $Id: toplevel,v 2.3 1997/10/26 10:29:05 ksb Exp $
+#
+#	Makefile for %% package-name %% distriburtion
+
+SUBDIR= %% LIB/PROD1 BIN/PROD2 ETC/OTHER %%
+OTHER=	README %% files like INSTALL TODO %%
+SOURCE=	Makefile ${OTHER}
+
+P=
+LOOP=	for i in ${SUBDIR}; do\
+		echo $$i:;\
+		( cd $$i;\
+		[ -f Makefile ] || co -q Makefile;\
+		make ${MFLAGS} DEBUG="${DEBUG}" DESTDIR="${DESTDIR}" P="$P" $@; \
+		)\
+	done
+DEBUG=	-O
+
+all: source FRC
+	${LOOP}
+
+calls: FRC
+	echo "Too much output and CPU usage."
+
+clean: FRC
+	rm -f Makefile.bak a.out core errs lint.out tags
+	${LOOP}
+
+deinstall: FRC
+	echo "Unsafe to deinstall a whole binary directory."
+	false
+
+depend: FRC
+	${LOOP}
+
+dirs: FRC
+	${LOOP}
+
+distrib: FRC
+	${LOOP}
+
+install: FRC
+	${LOOP}
+
+lint: FRC
+	echo "Too much CPU usage."
+
+mkcat: FRC
+	${LOOP}
+
+print: FRC
+	echo "Too much output."
+
+source: ${SOURCE}
+	${LOOP}
+
+spotless: FRC
+	${LOOP}
+
+tags: FRC
+	${LOOP}
+
+${SOURCE}:
+	co -q $@
+
+FRC:

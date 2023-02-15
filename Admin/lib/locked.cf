@@ -1,0 +1,13 @@
+# $Id: locked.cf,v 1.1 2000/07/02 17:46:46 ksb Exp $
+# An instck template to keep root's private data private -- ksb
+#
+#	$Compile: ${instck-instck} -C%f -i /usr/msrc
+#
+etc/ssh_host_key/sec	 	drwx--S---      root  root  -
+usr/local/etc/mkacct/lib	drwx--S---      root  root  -
+usr/local/lib/conserver.cf/pod/.pass -rw------- root  root  -
+usr/local/lib/op/RCS/lsftp,v	-r-x------      root  root  -
+usr/local/lib/op/lsftp		-r-x------      root  root  -
+usr/local/lib/op/lsftp-key	-rw-------      root  root  -
+trash/				drwxrwxrwt	root	 *  -
+*/				drwxr-xr-x/2020	   *	 *  -

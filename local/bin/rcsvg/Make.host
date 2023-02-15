@@ -1,0 +1,109 @@
+`#	$Id: Make.host,v 2.11 2000/06/20 14:10:03 ksb Exp $
+#
+#	Makefile for rcsvg
+#
+
+SHELL=/bin/sh
+PROG=	rcsvg
+BIN=	${DESTDIR}/usr/local/bin
+DOC=	${DESTDIR}/usr/man
+
+I=/usr/include
+S=/usr/include/sys
+L=/usr/include/local
+P=
+
+INCLUDE=
+DEBUG=	
+CDEFS=  -D'HOSTTYPE`
+CFLAGS= ${DEBUG} ${CDEFS} ${INCLUDE}
+YFLAGS=	
+
+GENC=	main.c
+GENH=	main.h
+GEN=	${GENC} ${GENH}
+HDR=	util.h machine.h
+SRC=	util.c
+EXP=	scandir.c
+DEP=	${GENC} ${EXP} ${SRC}
+OBJ=	main.o util.o'ifelse(
+HOSTTYPE,SUN5,` scandir.o')`
+MAN=	rcsvg.man
+OTHER=	README rcsvg.m
+SOURCE=	Makefile ${OTHER} ${MAN} ${HDR} ${SRC}
+
+all: ${PROG}
+
+${PROG}:$P ${OBJ}
+	${CC} -o $@ ${CFLAGS} ${OBJ}
+
+main.h: main.c
+
+main.c: ${PROG}.m
+	mkcmd ${PROG}.m
+	-(cmp -s prog.c main.c || (cp prog.c main.c && echo main.c updated))
+	-(cmp -s prog.h main.h || (cp prog.h main.h && echo main.h updated))
+	rm -f prog.[ch]
+
+${EXP}:
+	explode $@
+
+boot: all dirs FRC
+	cp ${PROG} ${BIN}/${PROG}
+
+clean: FRC
+	rm -f Makefile.bak ${PROG} ${GEN} ${EXP} *.o a.out core errs lint.out tags
+
+calls: ${SRC} ${HDR} ${GEN} ${EXP} FRC
+	calls ${CDEFS} ${INCLUDE} ${DEP}
+
+deinstall: ${MAN} ${DOC} FRC
+	install -R ${BIN}/${PROG}
+	mkcat -r${DOC} -D ${MAN}
+
+depend: ${SRC} ${HDR} ${GEN} ${EXP} FRC
+	maketd -a ${CDEFS} ${INCLUDE} ${DEP}
+
+dirs: ${BIN}
+
+distrib: FRC
+	distrib -c ${BIN}/${PROG} HOST
+
+install: all dirs FRC
+	install -cs ${PROG} ${BIN}/${PROG}
+
+lint: ${SRC} ${HDR} ${GEN} ${EXP} FRC
+	lint -h ${CDEFS} ${INCLUDE} ${DEP}
+
+mkcat: ${MAN} ${DOC} FRC
+	mkcat -r${DOC} ${MAN}
+
+print: source FRC
+	lpr -J"${PROG} source" ${SOURCE}
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+tags: ${HDR} ${SRC} ${GEN}
+	ctags -t ${HDR} ${SRC} ${GEN}
+
+${BIN}:
+	mkdir -p $@
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+
+# DO NOT DELETE THIS LINE - maketd DEPENDS ON IT
+
+main.o: machine.h main.c util.h
+
+util.o: machine.h main.h util.c
+
+scandir.o: scandir.c
+
+# *** Do not add anything here - It will go away. ***
+'dnl

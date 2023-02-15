@@ -1,0 +1,161 @@
+# $Id: README,v 2.6 1998/03/11 22:52:46 ksb Exp $
+
+These makefile templates construct meta source compliant make(1)
+descriptions of UNIX products.  Read the papers and follow the
+system so your code will compile and run across many UNIX flavors.
+
+Some of the names of these have changed since the 1.x and 2.2 releases.
+All the data is still here but you'll have to read the descriptions
+to find the right templates now.
+
+
+Extenders we use here:
+
+platform -	Any Makefile with out the host support.  Includes a pkg
+		makefile to use w/o the master level.
+
+master -	The original Master Source system.  Builds on any remote
+		platform using the leverage stuff, but only the current
+		version.
+
+meta -		The new Meta Source system, build many products from a
+		known version from the master source.
+
+The following special Makefile templates are in this directory:
+
+pkg -		The release building makefile, don't mess with
+		this without a meta makefile and a list of products.
+		The Make.meta should be a toplevel.mk or a toplevel.meta.
+		See papers/release.ms.
+
+meta -		The generic level 2 [version] makefile, builds the same
+		product on any target system.
+
+
+Standard makefiles by brand:
+
+dir -		Assumes that the subdirectoies are passive (do not require
+		any special host actions).
+
+toplevel -	Like a dir, but the subdirs are active components and
+		must have control passed down for every action.
+
+data -		Install a lib data directory.
+
+singlec -	Builds a binary from a single .c file.
+
+multiplec -	Builds a binary from multiple .c files (only).
+
+genc -	 	Builds a binary using lex, yacc, mkcmd, and cc.
+
+gnu -		Interface to the a GNU package in a tar archive -- run
+		"configure" an force answers to any interactive prompts.
+
+libc -		Build a library from lots of C source files
+
+script - 	Builds shell scripts
+
+src -		For source directory structures that group by position
+		rather than release: refer the Implementor to /usr/msrc/Pkgs
+
+pick -		Choose from a few sibdirectory options, use only one.
+
+dead -		Builds nothing - for directories that contain only docs
+
+
+Standard Distfiles for the host level:
+
+master/Distfile - for any single product
+
+meta/Distfile -	for any package directory
+
+
+Example usage:
+
+[The script "mkms" does these first steps for you.]
+
+Suppose these templates are in $T (like /usr/msrc/Admin/templates).
+We might
+	mkdir fred
+	cd fred
+	cp $T/meta/Distfile .
+	cp $T/meta/meta Makefile
+	cp $T/master/gen Make.host
+	chmod 644 *
+	mkdir RCS
+	chmod 2775,g+s RCS .
+
+To build a new source directory "fred".  Then copy in the C source files and
+stuff you need to build fred (if there is a Makefile you must change
+the name and plunder it for info to put in Make.host).
+
+Now edit Make.host Makefile and Distfile to replace the %%stuff%% tokens
+with the lore you read from the original makefile.  If you get it all
+correctly installed you should be ready to build on the original target
+platform with no changes.
+
+To add other platforms add "property macros" to machine.h which trigger on
+the HOSTTYPEs listed in the distrib.cf for the target devices.  The *.host
+makefiles pass the HOSTTYPE down as a CPP -D to the C compiler to lever
+through machine.h.
+
+In the C code use these property macros to #if code in to do the system
+dependent parts of the program.  Never use the HOSTTYPE at this level if
+you can map to a meaningful property name.
+
+
+RCS usages:
+
+As soon as the converted code builds on one platform check it in to the
+RCS cache we build above (or sooner).
+
+We then use symbolic revision names (see ci -N, rcs -N) to keep track of
+the stable (best, tested, or new) versions of the product throughout its
+life.
+
+The tool "rcsvg" is the key to this little trick, see meta/Makefile for
+example usage.  (Below.)
+
+Pakage usage:
+
+[The script "mkpkg" does these first steps for you.]
+
+Same as mkms, but for many products that have all already be mkms'd.
+
+We are building a Package (like this one) name the facility and make
+a directory in your Pkgs directory for it.
+	mkdir facility
+	cd facility
+	cp $T/meta/Distfile .
+	cp $T/meta/Makefile .
+	cp $T/meta/toplevel Make.meta
+	cp $T/master/toplevel Make.host
+	chmod 644 *
+	mkdir RCS
+	chmod 2775,g+s RCS .
+
+Edit all the percent-percent tokens out of the files, provide a README
+and maybe a TODO list and INSTALL notes.  Build the directories required
+for the structure of the package (bin, lib, etc) but NOT the leaves.
+Let rcsvg and make will in the leaves.
+
+
+The bin directory:
+
+These are prototypes for the real programs I'd like to code.  Use with care.
+
+
+The users and groups:
+
+We use the login and group "source" (uid 810, gid 810).
+
+Logins in group "source" are allowed to make changes.  The user "root" usually
+ownes the structure of the system, and the user "source" is used to build
+programs that might be untrusted.  Note that the GNU rcs source is one of
+the programs that we build as "source" rather than root.
+
+Packages might be chowned to root.source before we archive them, or
+source.source in strange cases.
+
+--
+ksb, mm, dsg, & lebo

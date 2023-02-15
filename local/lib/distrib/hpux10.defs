@@ -1,0 +1,10 @@
+# $Id: hpux10.defs,v 1.1 1999/03/06 13:38:48 ksb Exp $
+#
+# We set umask because not all sites set one on inetd (you should).
+umask 022
+#
+# In PATH we might have to include "/usr/ccs/bin" or "/opt/gnu/bin" to
+# find a C compiler.
+PATH=/usr/local/bin:/usr/local/etc:/usr/ccs/bin:$PATH:/usr/sbin:/sbin
+SHELL=/usr/bin/sh
+export PATH SHELL

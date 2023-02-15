@@ -1,0 +1,90 @@
+# $Id: Targets,v 2.1 1997/02/21 21:48:46 ksb Gamma $
+
+This is the list of the targets supported by the meta source system.
+You can add more as you need them. -- ksb
+
+[quit:]
+
+	If the default (all) target is too much to take without meaning
+	it this "safety" catch is installed in the Makefile.
+
+all: ${PROG}
+
+	Build the product, but do not install it.
+
+<user-targets>
+	
+	Used internally to build the product.
+
+clean: FRC
+
+	Remove all the temporary files used to build the product, but
+	not the source.
+
+deinstall: ${MAN} FRC
+	
+	Remove the installed product, and documentation.
+
+depend: ${HDR} ${SRC} FRC
+
+	Update the transitive dependencies in this Makefile, don't use -a
+
+dirs: ${BIN} ${LIB}
+
+	Build the destination directories for the product.
+
+distrib: FRC
+
+	Assuming the product is installed copy it to same CPUs with distrib
+
+install: all dirs FRC
+
+	Install the product.
+
+lint: ${HDR} ${SRC} FRC
+
+	Report questionable C constructs, if no C source do nothing.
+
+mkcat: ${MAN} ${DOC}
+
+	Install the documentation for the product.
+
+print: source FRC
+
+	Output the source code to the product to a printer.
+
+[msource: ${SOURCE}]
+
+	Create the master source, check it out from RCS.
+
+[rsource: source]
+	
+	Create the remote (platform) source directories on the platforms
+	given in $HOSTS.  These should be built under $INTO.
+
+source: ${SOURCE}
+
+	Checkout all the source files needed to build the product.
+
+spotless: clean
+
+	Use rcsclean to remove un-modified products.
+
+[stage: dirs]
+
+	Used only in the level 3 makefile to stage the release
+
+tags: ${HDR} ${SRC}
+
+	Use ctags to build a database of functions in the product.
+
+/ ${BIN} ${LIB}:
+
+	Used internally to build destination directories.
+
+${SOURCE}:
+	Used internally to RCS co source files.
+
+FRC:
+	Used internally to `force' targets.  Clean should really remove
+	any file named FRC but we found that distasteful.

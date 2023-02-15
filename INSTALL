@@ -1,0 +1,101 @@
+# $Id: INSTALL,v 1.2 1997/07/15 00:31:06 ksb Exp $
+
+The meta source install notes:
+
+To get started put this package distribution under some "well known" place
+in the file system (your home directory would be OK for now, or /usr/msrc).
+In the long run you'll want a place that is group writable by "source" {you
+might want to build group source now too}.
+	# mkdir -p /usr/msrc
+	# cd /usr/msrc
+	# chgrp source .
+	# chmod 775,g+s .
+	<become yourself?>
+	$ gunzip < ~/msrc.tar.gz | tar xvf -
+	$ ls
+	Admin      INSTALL    Makefile   README
+	Distfile   Make.host  Pkgs       local
+
+[Commands with a "#" might have to be run as root. "$" commands as yourself.]
+
+We need distrib built to push the source code around.  To build distrib
+"in place" we have to trick the platform makefile into working on from
+the master source.  This is possible for distrib itself because I was
+careful to limit my use of the meta source features here.
+
+Change directory into the source for distrib
+
+Look in machine.h for params you might have to force.  If your platform
+needs tweaks send me the patches (ksb@fedex.com).  Distrib needs to know
+the path to rdist and m4, but should know them for any supported platform.
+	$ cd local/etc/distrib
+	$ vi machine.h Make.host
+
+Then build distrib with the "msrc0" program "makeme" to build distrib:
+	$ makeme all
+
+Test distrib a little.  Check the compiled HOSTTYPE:
+	$ ./distrib.x -C/dev/null -V
+	distrib.x: _Id: distrib.m,v 4.14 1996/07/22 18:36:38 kb207252 Exp _
+	distrib.x: using configuration from `/dev/null'
+	distrib.x: default column headers: %HOST SHORTHOST HOSTTYPE HOSTOS HASSRC
+	distrib.x: compiled HOSTTYPE is HPUX9
+	distrib.x: library path "/usr/local/lib/distrib"
+	distrib.x: rdist binary is "/usr/local/bin/rdist"
+	distrib.x: m4 binary is "/usr/bin/m4"
+
+Install distrib's binary:
+	# makeme install
+
+Install a distrib.cf for the other source hosts you need:
+	$ cd ../../lib/distrib.cf
+	# makeme boot
+
+There is another program we'll need once we get rolling: rcsvg.  We should
+build it now with msrc0's makeme, or with distrib and the whole deal.  I'd
+use makeme now and learn the rest later:
+	$ cd ../../bin/rcsvg
+	$ makeme all
+	# makeme install
+
+
+
+To boot other machines (new platforms as well):
+
+There is an INSTALL file in distrib's source directory.  Now that you have
+a boot-strap binary you can follow that to build all the other platforms
+"mkcmd" "explode" "distrib" "distrib.cf" "rcsvg" and libs.
+
+Follow the new platform instructions below for each platform group you have.
+A platform group is a set of machines with the same hosttype and political
+affiation or system admin authority.  We can break hosts up by configuration
+file and hosttype to form as many groups as needed.
+
+One host for each group is designated the "platform source" for that group,
+we'll push things to that one to compile, then push the resulting products
+to the peer machines in that group.
+
+Install "distrib.cf" on each platform source hosts.  Install a "local.defs"
+file while your about it.  Local.defs contains a few "glue" shell commands
+to set the umask and PATH (and LD_LIBRARY_PATH, etc.) for the platform.
+See examples in lib/distrib.cf.
+
+On some platforms we need to include a new directory in the search path to
+get the version of "install" or "cc" that we need to build system products.
+The normal users of the machine may use a funny C compiler that we don't
+want to use for system programs (I'd use gcc if we had it).  In that case
+we have to build a (bogus name warning) /usr/local/lib/distrib/bin and include
+it first in the PATH in local.defs.  Put all the programs we need in that
+directory (install, mkcmd, cc, make, m4, distrib) if you can't put them in
+the usual places.
+
+If you like you can trap entry to the platform source machine in local.defs
+and limit it to some off-peak time so people can't make changes with the
+meta source in "production".  This is usually more of a management issue
+than a technical one.
+
+Get more packages from me, and see how they work.  I have a "GNU" package
+with the msrc interface to the gnu tar files (which works pretty well).
+
+--
+ksb

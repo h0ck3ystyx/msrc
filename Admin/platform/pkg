@@ -1,0 +1,39 @@
+# $Id: pkg,v 2.4 1997/10/26 20:13:20 ksb Exp $
+#
+#	package builder Makefile for %% product %%
+
+SRC=/usr/src
+TMP=/tmp
+STAGE=${TMP}/%% release_name-number %%
+VGOPTS=%% options to rcsvg -- forced to "-R" on command line sometimes %%
+
+quit:
+	echo "Use \`make all' to construct this package" 1>&2
+	false
+
+all: source
+
+${TMP}:
+	echo "Cannot find ${TMP}, which we will not build."
+	false
+
+${STAGE}: ${TMP}
+	rcsvg ${VGOPTS} -S ${STAGE} %% Release name %%
+	rm -f ${STAGE}/Makefile
+	mv ${STAGE}/Make.meta ${STAGE}/Makefile
+
+# for each product "BIN/PROD"
+${STAGE}/%%BIN/PROD%%: ${STAGE}
+	cd ${SRC}/%%local/BIN/PROD%% && rcsvg ${VGOPTS} -S $@ %% Version %%
+
+#%% repeat above as needed ... %%
+
+clean: FRC
+	rm -rf ${STAGE}
+
+calls depend deinstall dirs install mkcat source: stage
+	cd ${STAGE} && make $@
+
+stage: ${STAGE} %% ${STAGE}/BIN/PROD ... %%
+
+FRC:

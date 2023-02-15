@@ -1,0 +1,98 @@
+.\" $Id: rcsvg.man,v 2.6 1998/01/29 18:19:17 ksb Exp $
+.\" by Kevin Braunsdorf
+.TH RCSVG 1L LOCAL
+.SH NAME
+rcsvg \- RCS version grab
+.SH SYNOPSIS
+.ds PN "rcsvg
+\fI\*(PN\fP [\-\fBcfmnRv\fP] [\-\fBS\fP \fIstage\fP] \fIversion\fP [\fIsource\fP]
+.br
+\fI\*(PN\fP \-\fBh\fP
+.br
+\fI\*(PN\fP \-\fBV\fP
+.br
+
+.sp
+.SH DESCRIPTION
+\fBRcsvg\fP extracts a consistant set of revisions from an RCS
+cache for a product.  These revisions (which all have a common
+symbolic number) are refered to as a version of the product.
+.PP
+The positional parameter \fIversion\fP is the symbolic number
+of the version of the product requested.  \fIRcsvg\fP \fBco\fP's
+from each RCS cache in the \fIsource\fP direcrtory (default ``.'')
+the revision \fIversion\fP dumping the output to a parallel
+direcrtory structure under \fIstage\fP (default \fB/tmp/\fP\fIversion\fP).
+.PP
+The checked-out source in the heirarch is left undisturbed.  Any
+symbolic links in the source are copied as-is.  \fIRcsvg\fP
+descends any subdirectories (except \fBRCS\fP) after finishing
+the current level.
+.PP
+Some error conditions are flagged with bits in \fIrcsvg\fP's exit
+status.
+.RE
+.TS
+c l.
+1	RCS cache file not readable
+2	found a character or block special file
+4	symbolic link through / or off top
+8	found a trash file in RCS
+.TE
+.RE
+.SH OPTIONS
+This command reads the environment variable \fBRCSVG\fP for options.
+.TP
+.BI \-c
+Any files which \fIcmp\fP(1) the same as their already staged
+revision are not updated.
+This is good for \fImake\fP(1) dependencies.
+.TP
+.BI \-f 
+The \fB\-m\fP flag creates read-only files in the stage directory
+which overlayed collections cannot write over: this flag forces
+an unlink of all target files (that exist) before we try to
+checkout on top of them.
+.TP
+.BI \-h 
+Print a short help message.
+.TP
+.BI \-m
+Use the modes on the RCS cache files, rather than the checked out
+revisions, for the staged files.
+.TP
+.BI \-n 
+Do not execute commands, trace only.
+.TP
+.B \-R
+Create a symbolic link back the the RCS cache directory from which we built
+the checked out files.  This is mostly useful for running rcsclean to
+cleanup the stage when we are done playing.
+.TP
+.BI \-S stage
+Specify a staging area we should construct/update the requested version.
+The default \fIstage\fP is \fB/tmp/\fP\fIversion\fP.
+.TP
+.BI \-v 
+Output verbose shell-like commands the describe actions.
+.TP
+.BI \-V 
+Show version information.
+.SH EXAMPLES
+.TP
+\fBrcsvg\fP -S /tmp/ksb Second /usr/src/local/bin/rcsvg
+Extract the version of this program named ``Second''.
+.TP
+\fBrcsvg\fP -c Four
+Extract the version ``Four'' of the program in the current
+directory to /tmp/Four.  Do not change any files which are already
+there and are the same.
+.SH BUGS
+The checking for symbolic links that leave the subtree is not
+fully implemented (yet).
+.SH AUTHOR
+Kevin Braunsdorf
+.br
+ksb@fedex.com
+.SH "SEE ALSO"
+sh(1), rcsintro(5), co(1), mkdir(1), cmp(1), make(1)

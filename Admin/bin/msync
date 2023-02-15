@@ -1,0 +1,97 @@
+#!/bin/ksh
+# $Id: msync,v 1.5 2000/07/14 15:45:36 ksb Exp $
+# make sure this master source (or meta source) dir is in sync:
+#	modes are dist quality
+#	co'd files are latest version
+#	all subdirs match this version
+#	RCS dirs are clean
+# msync: usage [version] [directory]
+
+ADMIN=/usr/msrc/Admin
+PATH=$ADMIN/bin:$PATH
+PROGNAME=`basename $0 .ksh`
+TMPV=/tmp/msv$$
+TMPCF=/tmp/msc$$
+
+if [ ! -d RCS ] ; then
+	echo 1>&2 "$PROGNAME: `pwd`: no RCS directory"
+	exit 1
+fi
+
+if [ $# -gt 0 ] ; then
+	VER=$1
+	shift
+else
+	# verof outputs error message for us
+	VER=`verof` || {
+		exit 1
+	}
+fi
+
+ScanSrc () {
+	if [ $# -lt 1 ] ; then
+		set _ "."
+		shift
+	fi
+
+	echo "$1	drwxrwsr-x	*	source		-" >$TMPCF
+	for file in `/bin/ls $1`
+	do
+		[ -d "$file" ] || continue
+		echo "$file	drwxrwsr-x	*	source		-" >>$TMPCF
+		case "$file" in
+		RCS)
+			if [ _. = _$1 ] ; then
+				instck -C $ADMIN/lib/rcs.cf RCS 2>&1
+			else
+				instck -C $ADMIN/lib/rcs.cf $1/RCS 2>&1
+			fi ;;
+		*)
+			if [ _. = _$1 ] ; then
+				msync $VER $file
+			else
+				msync $VER $1/$file
+			fi ;;
+		esac
+	done
+	cat <<\! >>$TMPCF
+# plain files
+a.out	!00755/07022	*	source		-
+core	!0		*	source		-
+errs	!0		*	source		-
+lint.out !0		*	source		-
+res	!0		*	source		-
+FRC	!0		*	source		-
+*	-r-?r-?r-?	*	source		-
+!
+	instck -C$TMPCF $1 2>&1
+	if [ _"$1/RCS/*" != _"`echo $1/RCS/*`" ] ; then
+		rlog -R -L $1/RCS/* 2>&1
+		( cd $1 && rcsdiff -q -r${VER:-One} RCS/* ) 2>&1
+	fi
+}
+
+
+if [ $# -lt 1 ] ; then
+	set _ .
+	shift
+fi
+
+for dir
+do
+	ScanSrc $dir
+done >$TMPV
+
+if [ -s "$TMPV" ] ; then
+	cat $TMPV
+else
+	if [ $# -eq 1 -a _. = _$1 ] ; then
+		echo 1>&2 "${PWD##*/} in sync at $VER"
+	else
+		echo 1>&2 "$* in sync at $VER"
+	fi
+fi
+
+rm -f $TMPV $TMPCF
+
+exit 0

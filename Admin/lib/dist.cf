@@ -1,0 +1,15 @@
+.	drwxrwsr-x	*	source		-
+RCS	"		"	"		"
+bin	"		"	"		"
+lib	"		"	"		"
+etc	"		"	"		"
+doc	"		"	"		"
+local	"		"	"		"
+[A-Z]*/	"		"	"		"
+# plain files
+a.out	!755		*	*		-
+core	!0		*	*		-
+lint.out !0		"	"		"
+errs	"		"	"		"
+res	"		"	"		"
+*	-r-?r-?r-?	*	source		-

@@ -1,0 +1,82 @@
+#!/bin/ksh
+Id='$Id: mkpkg,v 2.1 1997/10/26 17:40:32 ksb Exp $'
+# Build a meta source package directory					(ksb)
+# Read the list of product from stdin, build the makefiles.
+
+PROGNAME=`basename $0 .ksh`
+T=/usr/msrc/Admin/master
+M=`dirname $T`/meta
+
+if [ ! -d "$T" ] ; then
+	echo "$PROGNAME: no template directory found here" 1>&2
+	echo "$PROGNAME: (looked in $T)" 1>&2
+	exit 2
+fi
+
+case _"$1" in
+_-h|_--help)
+	cat <<!
+$PROGNAME: usage [products]
+$PROGNAME: usage -h
+$PROGNAME: usage -V
+products  the list of master sourced products to include in the release
+h         provide this help message
+V         output version information
+!
+	exit 0 ;;
+_-V|_--version)
+	cat <<!
+$PROGNAME: $Id
+$PROGNAME: templates from $M (and $T)
+!
+	exit 0 ;;
+esac
+
+count=`/bin/ls -1 . | grep -v RCS | wc -l`
+
+if [ "$count" -gt 0 ] ; then
+	echo "$PROGNAME: directory should be empty to start"
+	exit 3
+fi
+
+cp $M/Distfile ./Distfile
+cp $M/Makefile ./Makefile
+cp $M/toplevel ./Make.meta
+cp $T/toplevel ./Make.host
+chmod +w Distfile Makefile Make.meta Make.host
+
+# this is Quite Clever, make the directory and copy the modes to
+# the RCS directory from . -- ksb
+[ -d RCS ] || {
+	mkdir RCS
+	echo "." | cpio -pdm RCS 2>&1 | grep -v blocks
+}
+
+sed -e 's/ZIdZ/Id/' >README <<!
+# \$ZIdZ\$
+
+%% put in your comments here %%
+--
+${USER-${LOGNAME-`whoami`}}
+!
+
+echo "distribute source" | rcs -i -q Distfile
+echo "explain the need" | rcs -i -q README
+echo "assemble products" | rcs -i -q Makefile
+echo "send source to platform" | rcs -i -q Make.meta
+echo "compile source on platform" | rcs -i -q Make.host
+
+vi +'/%%' Distfile README Makefile Make.meta Make.host
+
+for vic in Distfile README Makefile Make.meta Make.host
+do
+	if grep -s "%%.*%%" $vic ; then
+		echo "$vic not fully configured, re-edit and ci"
+	else
+		ci -u -q $vic
+	fi
+done
+
+/bin/ls -las .
+
+exit 0

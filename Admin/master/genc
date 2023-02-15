@@ -1,0 +1,114 @@
+`# $Id: genc,v 2.3 1997/10/26 14:56:36 ksb Exp $
+#
+#	master Makefile for %% program name %%
+
+PROG=	%% program name %%
+BIN=	${DESTDIR}/%% bin directory might change to ETC %%
+LIB=	${DESTDIR}/%% lib directory if needed %%
+DOC=	${DESTDIR}/usr/local/man
+
+I=/usr/include
+S=/usr/include/sys
+L=/usr/include/local
+P=
+
+INCLUDE=%% include file directories %%
+DEBUG=	%% compiler debug/optimize switch %%
+CDEFS=  -D'HOSTTYPE`%% extra arguments for the C compiler %%
+CFLAGS= ${DEBUG} ${CDEFS} ${INCLUDE}
+YFLAGS=	%% extra arguments for yacc %%
+
+L_SRC=	%% where source symbolic links point (or delete 6 lines) %%
+LN=	ln -s
+#LN=	ln
+LINKC=	%% symbolic sources (.c) links %%
+LINKH=	%% symbolic headers (.h) links %%
+LINK=	${LINKC} ${LINKH}
+GENC=	%% generated source (.c) files %%
+GENH=	%% generated header (.h) files %%
+GEN=	${GENC} ${GENH}
+HDR=	%% header (.h) files %%
+SRC=	%% source (.c) files %%
+DEP=	${GENC} ${LINKC} ${SRC}
+OBJ=	%% object (.o) files %%
+MAN=	%% the manual page for this tool %%
+OTHER=	README %% other files in this directory %%
+SOURCE=	Makefile ${OTHER} ${MAN} ${HDR} ${SRC}
+
+all: ${PROG}
+
+${PROG}:$P ${OBJ}
+	${CC} -o $@ ${CFLAGS} ${OBJ} %% -ltermcap -lm -lopt -lpucc %%
+
+# %% Make rules must be put here for building the generated files.
+# The following are only an examples
+
+# yacc, lex example
+y.tab.h: gram.c
+
+gram.c: gram.y
+
+scan.c: scan.l
+
+# %% mkcmd example
+main.h: main.c
+
+main.c: ${PROG}.m
+	mkcmd ${PROG}.m
+	-(cmp -s prog.c main.c || (cp prog.c main.c && echo main.c updated))
+	-(cmp -s prog.h main.h || (cp prog.h main.h && echo main.h updated))
+	rm -f prog.[ch]
+
+clean: FRC
+	rm -f Makefile.bak ${PROG} ${GEN} ${LINK} *.o a.out core errs lint.out tags
+
+calls: ${SRC} ${HDR} ${GEN} FRC
+	calls ${CDEFS} ${INCLUDE} ${DEP}
+
+deinstall: ${MAN} ${DOC} FRC
+	install -R ${BIN}/${PROG}
+	mkcat -r${DOC} -D ${MAN}
+
+depend: ${SRC} ${HDR} ${GEN} ${LINK} FRC
+	maketd ${CDEFS} ${INCLUDE} ${DEP}
+
+dirs: ${BIN} ${LIB}
+
+distrib: FRC
+	distrib -c ${BIN}/${PROG} HOST
+
+install: all dirs FRC
+	install -cs ${PROG} ${BIN}/${PROG}
+
+lint: ${SRC} ${HDR} ${GEN} FRC
+	lint -h ${CDEFS} ${INCLUDE} ${DEP}
+
+mkcat: ${MAN} ${DOC} FRC
+	mkcat -r${DOC} ${MAN}
+
+print: source FRC
+	lpr -J"${PROG} source" ${SOURCE}
+
+source: ${SOURCE}
+
+spotless: clean
+	rcsclean ${SOURCE}
+
+tags: ${HDR} ${SRC} ${GEN}
+	ctags -t ${HDR} ${SRC} ${GEN}
+
+${LINK}:	%% delete 3 if not used %%
+	${LN} ${L_SRC}/$@ .
+
+${BIN} ${LIB}:
+	install -dr $@
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+
+# DO NOT DELETE THIS LINE - make depend DEPENDS ON IT
+
+# *** Do not add anything here - It will go away. ***
+'dnl

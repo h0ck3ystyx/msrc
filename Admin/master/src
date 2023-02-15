@@ -1,0 +1,16 @@
+`#	$Id: src,v 2.1 1997/10/26 14:58:26 ksb Exp $
+#
+#	Makefile for %% directory of master source files %%
+#
+
+SOURCE=	Makefile %% README %%
+
+all clean depend install lint print source spotless tags: FRC
+	echo "see /usr/msrc/Pkgs for package build info"
+
+
+${SOURCE}:
+	co -q $@
+
+FRC:
+'dnl

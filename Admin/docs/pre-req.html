@@ -1,0 +1,98 @@
+<HTML>
+<TITLE>Pre-Requisite Tools</TITLE>
+<BODY>
+<PRE>
+$Id: pre-req.html,v 1.3 1997/07/15 00:07:44 ksb Exp $
+</PRE>
+
+<H1>UNIX Implementations</H1>
+
+<P>UNIX provides most of the utility base for the source
+organization.
+These tools implement the framework of the source organization:
+<UL>
+<H3><LI>RCS -- ci, co, rcs, rcsdiff</H3>
+<A name="revision">
+A revision control system.</A>
+This tracks changes and
+allows the implementor recover from misdirected efforts.
+This document assumes the use of RCS, the SCCS product may
+be substituted with little effort.
+
+<H3><LI>make</H3>
+<A name="make">
+A utility for constructing a product from its parts.<A/>
+Since a version is constructed from revisions we need a tool to
+control that process.
+
+<H3><LI>sh</H3>
+<A name="shell">
+The programming language for issuing system commands.
+</A>
+
+<H3><LI>rdist</H3>
+<A name="rdist">
+The control for transmitting files peer to peer or master to slave.
+</A>
+We will actually build a small front end program on top of rdist
+to save effort in integration (called <EM>distrib</EM>).
+
+<H3><LI>m4</H3>
+<A name="macro">
+A macro processor to filter text based on a "type" key.
+</A>
+``The use of m4 shows questionable judgment.''
+</UL>
+
+<A name="local">
+<H1>Access to utilities</H1>
+</A>
+To gain access to the system C compiler, linker, and other
+UNIX utilities we must
+set some system parameters (viz. umask and $PATH).
+<P>
+We could encode the system C compile in the Makefile as:
+<PRE><CODE>
+	CC=gcc
+</CODE></PRE>
+but that doesn't set the search path ($PATH).
+<P>
+If we encode the search path in the name:
+<PRE><CODE>
+	CC=/opt/gnu/bin/gcc
+</CODE></PRE>
+We face changing all the Makefiles on the system if the
+C compiler changes.
+Using the UNIX search path is the clever choice here,
+the only implementation detail is how to leverage that
+facility.
+<P>
+We will integrate support for this requirement in a file
+called "local.defs" which is usually located in
+/usr/local/lib/distrib/local.defs.
+This file just sets a search path that includes the C compiler
+and other tools needed to build most applications on this
+platform.
+On FREEBSD, for example, it looks like:
+<PRE><CODE>
+	PATH=/usr/local/etc:/usr/local/bin:$PATH:/usr/sbin
+	export PATH
+	umask 022
+</CODE></PRE>
+<P>
+On Sun Solaris systems we must include "/usr/ccs/bin" in the PATH.
+Other systems may have other games we have to play (EP/IX is bad).
+
+<H1>Issues with access to other products</H1>
+<P>
+In addition to the frame-work tools described above most
+useful products need access to a compiler or interpreter.
+To be successful we need to pick
+which compiler to use and what options to put on the
+command line.
+By "which" we mean the name as well as the location.
+
+<HR>
+<A href="single.html">Next Page</A>
+</BODY>
+</HTML>

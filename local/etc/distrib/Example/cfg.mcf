@@ -1,0 +1,18 @@
+dnl $Id: cfg.mcf,v 4.0 1996/02/28 23:10:59 kb207252 Exp $
+dnl  This distrib.cf file is run through m4 (you knew it had to be
+dnl  possible) before distrib reads it.  That way we can leverage
+dnl  the macros MYTYPE (which we get from the compiled in DEF_HOSTTYPE)
+dnl  to add or delete lines we might (not) have.
+dnl
+dnl  host1 has source only if the current machine is also a SUN5
+dnl  host2 can have it's HASSRC defined with -DFORCE=luke on the command line
+dnl
+`# We are a std distrib.cf other than that.
+# note that this file has a mcf version, if the RCS Id is not
+# included at the top of this file this is a post processed version.
+#
+host1.movie.com		host1		SUN5	504	'ifelse(MYTYPE,`SUN5',`yes',`.')`
+host2.movie.com		host2		SUN5	504	'ifdef(`FORCE',FORCE,`.')`
+'ifdef(`HIDDEN',`extra.movie.com		extra	EPIX	302	.
+')dnl
+'dnl

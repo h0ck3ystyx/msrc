@@ -1,0 +1,13 @@
+#!/bin/ksh
+# $Id: unpkg,v 1.1 1999/03/15 23:53:06 ksb Exp $
+# A target in the meta Makefile to restore the Pkg to /usr/msrc, or
+# a shell script to do the same (unpkg?).  Move the sub products back
+# into /usr/msrc/local/product.  For example something like:
+#	$ cd /tmp
+#	<unpack install-9.2>
+#	$ cd install-9.2/
+#	$ unpkg /usr/msrc/local
+# -- ksb
+
+echo 1>&2 "$0: not implemented yet"
+exit 1
